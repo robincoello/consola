@@ -1624,7 +1624,7 @@ function crear_plugin($plugin) {
         "form_add.php",
         "form_edit.php",
         "form_details.php",
-        "form_deleteOk.php",
+        "form_delete.php",
         "index.php",
         "izq.php",
         "nav.php",
@@ -1675,3 +1675,4 @@ bdd_add_en_menu("top", "config", $plugin, "?c=$plugin", "far fa-folder", "0");
 
 echo "############################################################\n";
 echo "Registro en Magia";
+echo ""; 
