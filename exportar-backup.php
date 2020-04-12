@@ -946,10 +946,7 @@ $pdf->Output();
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">'."\n";
 
-                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ?
-                            bdd_campo("select", $columna['Field']) :
-                            bdd_campo($columna['Type'], $columna['Field'])
-                    ;
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
