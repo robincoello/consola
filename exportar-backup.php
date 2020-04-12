@@ -314,7 +314,7 @@ if (!permissions_has_permission($u_rol, $c, "delete")) {
     die("Error has permission ");
 }
 
-$id    = (isset($_POST["id"]))         ? clean($_POST["id"]) : false;
+$id    = (isset($_GET["id"]))         ? clean($_GET["id"]) : false;
 
 
 $error = array();
