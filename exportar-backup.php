@@ -739,8 +739,45 @@ function contenido_views($plugin, $archivo) {
 
         ## delete.php
         case "delete.php":
-            $contenido = 'delete';
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+        <?php // include "izq.php"; ?>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>
+            <i class="fas fa-language"></i>
+           <?php _t("' . $plugin . ' details"); ?>
+        </h1>
+        <hr>
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+
+        <?php include "form_delete.php"; ?>
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <?php // include "der.php";  ?>
+    </div>
+</div>
+
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
             break;
+
 
         ## details.php
         case "details.php":
@@ -783,6 +820,10 @@ function contenido_views($plugin, $archivo) {
 ';
             break;
 
+
+        
+        
+        
         ## edit.php
         case "edit.php":
             $contenido = '<?php include("www/home/views/header.php"); ?>  
@@ -917,7 +958,7 @@ $pdf->Output();
 ';
             break;
 
-        ## form_add.php
+        ## form_details.php
         case "form_details.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
     <input type="hidden" name="c" value="' . $plugin . '">
@@ -954,6 +995,46 @@ $pdf->Output();
 ';
             break;
 
+
+        ## form_delete.php
+        case "form_delete.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+    <input type="hidden" name="c" value="' . $plugin . '">
+    <input type="hidden" name="a" value="deleteOk">
+    <input type="hidden" name="id" value="<?php echo "$id"; ?>">
+    
+
+
+    ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= '<div class="form-group">
+        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">                    
+            <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" disabled="" >
+        </div>	
+    </div>' . "\n";
+            }
+
+            $contenido .= '
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Delete"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+
+';
+            break;
+            
+            
+            
         ## form_edit.php
         case "form_edit.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
@@ -1543,6 +1624,7 @@ function crear_plugin($plugin) {
         "form_add.php",
         "form_edit.php",
         "form_details.php",
+        "form_deleteOk.php",
         "index.php",
         "izq.php",
         "nav.php",
