@@ -212,10 +212,10 @@ function bdd_campo($tipo, $name) {
             $campo = '<?php # /' . $name . ' ?>';
             break;
 
-
-
         default:
-            $campo = '<input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
+            $campo = '<?php # ' . $name . ' ?>';
+            $campo = '          <input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
+            $campo = '<?php # /' . $name . ' ?>';
             break;
     }
 
