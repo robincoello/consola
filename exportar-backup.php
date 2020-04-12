@@ -67,14 +67,16 @@ function bdd_add_controllers($plugin) {
     ));
 }
 
-function bdd_add_permissions($plugin) {
+function bdd_add_permissions($plugin, $rol, $permiso) {
     global $db;
 
     $req = $db->prepare("            
-             INSERT INTO `permissions` (`id`, `rol`, `controller`, `crud`) VALUES (NULL, 'admin', :plugin, '1111');
+             INSERT INTO `permissions` (`id`, `rol`, `controller`, `crud`) VALUES (NULL, :rol, :plugin, :permiso);
             ");
     $req->execute(array(
-        "plugin" => "$plugin"
+        "rol" => $rol,
+        "plugin" => "$plugin",
+        "permiso" => $permiso
     ));
 }
 
@@ -1669,11 +1671,14 @@ echo "###########################################################\n";
 echo "Registro del plugin como controlador en la base de datos\n";
 bdd_add_controllers($plugin);
 echo "###########################################################\n";
-echo "Agrego los permisos para el root";
-bdd_add_permissions($plugin);
+echo "Agrego los permisos para el root" .  "\n";
+bdd_add_permissions($plugin, "admin", 1111);
+echo "Agrego los permisos para admin \n";
+bdd_add_permissions($plugin, "root", 1111);
+
 
 bdd_add_en_menu("top", "config", $plugin, "?c=$plugin", "far fa-folder", "0");
 
 echo "############################################################\n";
 echo "Registro en Magia";
-echo ""; 
+echo "\n"; 
