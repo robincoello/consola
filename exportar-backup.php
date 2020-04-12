@@ -1,16 +1,5 @@
 <?php
 
-include "config.php";
-################################################################################
-################################################################################
-echo "-=- MAGIA PHP -=-" . "\n";
-echo "Nombre del plugin?\n";
-do {
-    $plugin = trim(fgets(STDIN)); // lee una línea de STDIN    
-} while ($plugin == "");
-echo "Creation del plugin $plugin \n";
-################################################################################
-################################################################################
 
 function bdd_referencias($tabla, $columna) {
 
@@ -175,7 +164,7 @@ function bdd_campo($tipo, $name) {
 
     switch ($tipo) {
 
-        case 's':
+        case 'select':
             $campo = '<select  name="' . $name . '" class="form-control" id="' . $tabla_externa . '">                                
                 <?php ' . $tabla_externa . '_select("' . $columna_externa . '","' . $columna_externa . '", array(), array()); ?>                        
                 </select>';
@@ -188,20 +177,19 @@ function bdd_campo($tipo, $name) {
                 </select>';
             break;
 
-        case 'int':
-            
-            $campo = '<input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';
-            
+        
+        
+        case 'int':            
+            $campo = '<input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';            
             break;
 
-        case 'text':
-            
-            $campo = '<textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';
-            
+        
+        case 'text':            
+            $campo = '<textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';            
             break;
 
-        case 'date':
-            
+        
+        case 'date':            
             $campo = '<input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
             
             break;
@@ -950,7 +938,10 @@ $pdf->Output();
                     $contenido .= '     <div class="form-group">
         <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">'."\n";
-
+                    // esto es la creacion del campo en si 
+                    ///
+                    ///
+                    ///
                     $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
@@ -1606,10 +1597,6 @@ function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {
     return $contenido;
 }
 
-################################################################################
-################################################################################
-################################################################################
-
 function crear_carpeta($carpeta) {
     $cmd = "mkdir -p $carpeta";
     shell_exec($cmd);
@@ -1652,7 +1639,6 @@ function crear_plugin($plugin) {
 
     $contenido = "<?php";
 
-
     foreach ($archivos as $archivo) {
         crear_archivo("../www/$plugin/controllers/$archivo", contenido_controllers($plugin, $archivo));
         crear_archivo("../www/$plugin/models/$archivo", $contenido);
@@ -1681,20 +1667,3 @@ foreach (bdd_columnas_segun_tabla($plugin) as $campo) {
     }
 }
 
-
-crear_plugin($plugin);
-echo "###########################################################\n";
-echo "Registro del plugin como controlador en la base de datos\n";
-bdd_add_controllers($plugin);
-echo "###########################################################\n";
-echo "Agrego los permisos para el root" .  "\n";
-bdd_add_permissions($plugin, "admin", 1111);
-echo "Agrego los permisos para admin \n";
-bdd_add_permissions($plugin, "root", 1111);
-
-
-bdd_add_en_menu("top", "config", $plugin, "?c=$plugin", "far fa-folder", "0");
-
-echo "############################################################\n";
-echo "Registro en Magia";
-echo "\n"; 
