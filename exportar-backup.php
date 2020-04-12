@@ -989,12 +989,14 @@ $pdf->Output();
 
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
                 // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
                 $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
             <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" disabled="" >
         </div>	
     </div>' . "\n";
+                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
             }
 
             $contenido .= '
@@ -1069,12 +1071,14 @@ $pdf->Output();
 
 
                 if ($columna['Field'] != 'id') {
+                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
                     $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
             <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo $' . $plugin . '[\'' . $columna['Field'] . '\']?>">
         </div>	
     </div>' . "\n";
+                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
                 }
             }
 
