@@ -708,11 +708,11 @@ function contenido_views($plugin, $archivo) {
     switch ($archivo) {
         ## add.php
         case "add.php":
-            $contenido = '<?php include view("home", "header"); ?>  
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php //include view("' . $plugin . '", "add"); ?>
+        <?php //include "izq.php"; ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -723,8 +723,7 @@ function contenido_views($plugin, $archivo) {
         </h1>
 
 
-        <?php //include "form_add.php"; ?>
-        <?php include view("' . $plugin . '", "form_add"); ?>
+        <?php include "form_add.php"; ?>
 
 
     </div>
@@ -732,26 +731,22 @@ function contenido_views($plugin, $archivo) {
     <div class="col-sm-3 col-md-3 col-lg-3">
 
         <?php // include "der.php"; ?>
-        <?php // include view("' . $plugin . '", "der"); ?>
-        
     </div>
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
-<?php include view("home", "footer"); ?>
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
 
         ## delete.php
         case "delete.php":
-            $contenido = '<?php include view("home", "header"); ?>
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
         <?php // include "izq.php"; ?>
-        <?php // include view("' . $plugin . '", "izq"); ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -770,21 +765,18 @@ function contenido_views($plugin, $archivo) {
         ?>
 
 
-        <?php // include "form_delete.php"; ?>
-        <?php  include view("' . $plugin . '", "form_delete"); ?>
+        <?php include "form_delete.php"; ?>
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
         <?php // include "der.php";  ?>
-        <?php // include view("' . $plugin . '", "der"); ?>
     </div>
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
-<?php include view("home", "footer"); ?>
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
@@ -792,11 +784,11 @@ function contenido_views($plugin, $archivo) {
 
         ## details.php
         case "details.php":
-            $contenido = '<?php // include view("home", "header"); ?> 
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include view("' . $plugin . '", "izq"); ?>
+        <?php // include "izq.php"; ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -815,8 +807,7 @@ function contenido_views($plugin, $archivo) {
         ?>
 
 
-        <?php // include "form_details.php"; ?>
-        <?php include view("' . $plugin . '", "form_details"); ?>
+        <?php include "form_details.php"; ?>
 
     </div>
 
@@ -827,8 +818,7 @@ function contenido_views($plugin, $archivo) {
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
-<?php include view("home", "footer"); ?>
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
@@ -839,13 +829,11 @@ function contenido_views($plugin, $archivo) {
         
         ## edit.php
         case "edit.php":
-            $contenido = '<?php //include("www/home/views/header.php"); ?>  
-<?php include view("home", "header"); ?>                
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
         <?php // include "izq.php"; ?>
-        <?php include view("' . $plugin . '", "izq"); ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -864,31 +852,29 @@ function contenido_views($plugin, $archivo) {
         ?>
 
 
-        <?php // include "form_edit.php"; ?>
-        <?php include view("' . $plugin . '", "form_edit"); ?>
+        <?php include "form_edit.php"; ?>
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
         <?php // include "der.php";  ?>
-        <?php include view("' . $plugin . '", "der"); ?>
     </div>
 </div>
 
-<?php include view("home", "footer"); ?>
+
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
 
         ## export_json.php
         case "export_json.php":
-            $contenido = '<?php include view("home", "header"); ?>  
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-lg-0">
-        
-        <?php include view("' . $plugin . '", "izq"); ?>
+        <?php //include "www/addresses/views/izq.php"; ?>
     </div>
 
     <div class="col-lg-12">
@@ -910,7 +896,7 @@ function contenido_views($plugin, $archivo) {
     </div>
 </div>
 
-<?php include view("home", "footer"); ?>
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
@@ -1095,11 +1081,11 @@ $pdf->Output();
 
         ## search.php
         case "search.php":
-            $contenido = '<?php include view("home", "header"); ?> 
+            $contenido = '<?php include("header.php"); ?>  
 
 <div class="row">
     <div class="col-lg-3">
-        <?php include view("' . $plugin . '", "izq"); ?>
+        <?php include "izq.php"; ?>
     </div>
 
 
@@ -1131,11 +1117,7 @@ $pdf->Output();
     </div>
 </div>
 
-
-<?php include view("home", "footer"); ?>
-
-
-';
+<?php include "footer.php"; ?>';
             break;
 
         ## form_edit.php
@@ -1178,15 +1160,23 @@ $pdf->Output();
 
         ## index.php
         case "index.php":
-            $contenido = '<?php include view("home", "header"); ?>  
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-lg-3">
-        <?php include view("' . $plugin . '", "izq"); ?>
+        <?php  include "izq.php"; ?>
     </div>
 
     <div class="col-lg-9">
-       <?php include view("' . $plugin . '", "nav"); ?>
+
+
+
+        <?php
+        include "nav.php";
+        ?>
+
+
+
 
 
         <?php
@@ -1295,7 +1285,7 @@ $pdf->Output();
     </div>
 </div>
 
-<?php include view("home", "footer"); ?> 
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
@@ -1364,11 +1354,11 @@ $pdf->Output();
 
         ## search_advanced.php
         case "search_advanced.php":
-            $contenido = '<?php include view("home", "header"); ?>  
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include view("' . $plugin . '", "izq"); ?>
+        <?php //include "izq.php"; ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -1380,19 +1370,18 @@ $pdf->Output();
 
 
         <?php include "form_search_advanced.php"; ?>
-        <?php include view("' . $plugin . '", "form_search_advanced"); ?>
 
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
-        <?php // include view("' . $plugin . '", "der"); ?>
+        <?php // include "der.php"; ?>
     </div>
 </div>
 
 
-<?php include view("home", "footer"); ?>
+<?php include("www/home/views/footer.php"); ?>  
 
 ';
             break;
