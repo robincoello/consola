@@ -190,28 +190,28 @@ function bdd_campo($tipo, $name) {
 
         case 'int':
             
-            $campo = '          <input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';
+            $campo = '<input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';
             
             break;
 
         case 'text':
             
-            $campo = '          <textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';
+            $campo = '<textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';
             
             break;
 
         case 'date':
             
-            $campo = '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
+            $campo = '<input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
             
             break;
 
         case 'timestamp':            
-            $campo = '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="timestamp">';            
+            $campo = '<input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="timestamp">';            
             break;
 
         default:           
-            $campo = '          <input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
+            $campo = '<input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
            
             break;
     }
@@ -955,7 +955,7 @@ $pdf->Output();
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
-                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n"; 
+                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
                     echo "\n\n";
                     
                 }
