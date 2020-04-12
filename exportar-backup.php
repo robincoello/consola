@@ -949,16 +949,16 @@ $pdf->Output();
 
                 if ($columna['Field'] != 'id') {
                     
-                    $contenido .= "<?php # $plugin ?>\n";                     
+                    $contenido .= "<?php # $columna[Field] ?>\n";                     
                     $contenido .= '     <div class="form-group">
-        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">'."\n";
 
                     $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
-                    $contenido .= "<?php # /$plugin ?>\n\n"; 
+                    $contenido .= "<?php # /$columna[Field] ?>\n\n"; 
                     echo "\n\n";
                     
                 }
