@@ -1213,9 +1213,9 @@ $pdf->Output();
                 <thead>
                     <tr>';
 
-            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                $contenido .= '<th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
-            }
+                        foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                            $contenido .= '         <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+                        }
 
 
             $contenido .= '                                                                       
