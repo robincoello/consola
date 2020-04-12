@@ -338,6 +338,7 @@ if (! is_id($id)) {
     array_push($error, "Id Error");
 }
 ################################################################################
+$' . $plugin . ' = ' . $plugin . '_details($id);
 
 
 include "www/' . $plugin . '/views/delete.php";';
