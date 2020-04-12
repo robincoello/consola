@@ -189,33 +189,30 @@ function bdd_campo($tipo, $name) {
             break;
 
         case 'int':
-            $campo = '<?php # ' . $name . ' ?>';
-            $campo .= '          <input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';
-            $campo .= '<?php # /' . $name . ' ?>';
+            
+            $campo = '          <input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';
+            
             break;
 
         case 'text':
-            $campo = '<?php # ' . $name . ' ?>';
-            $campo .= '          <textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';
-            $campo .= '<?php # /' . $name . ' ?>';
+            
+            $campo = '          <textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';
+            
             break;
 
         case 'date':
-            $campo = '<?php # ' . $name . ' ?>';
-            $campo .= '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
-            $campo .= '<?php # /' . $name . ' ?>';
+            
+            $campo = '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
+            
             break;
 
-        case 'timestamp':
-            $campo = '<?php # ' . $name . ' ?>';
-            $campo .= '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="timestamp">';
-            $campo .= '<?php # /' . $name . ' ?>';
+        case 'timestamp':            
+            $campo = '          <input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="timestamp">';            
             break;
 
-        default:
-            $campo = '<?php # ' . $name . ' ?>';
-            $campo .= '          <input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
-            $campo .= '<?php # /' . $name . ' ?>';
+        default:           
+            $campo = '          <input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
+           
             break;
     }
 
