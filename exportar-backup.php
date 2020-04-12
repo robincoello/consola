@@ -949,7 +949,7 @@ $pdf->Output();
 
                 if ($columna['Field'] != 'id') {
                     
-                    $contenido .= "<?php # $columna[Field] ?>\n";                     
+                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
                     $contenido .= '     <div class="form-group">
         <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">'."\n";
@@ -958,7 +958,7 @@ $pdf->Output();
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
-                    $contenido .= "<?php # /$columna[Field] ?>\n\n"; 
+                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n"; 
                     echo "\n\n";
                     
                 }
