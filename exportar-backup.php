@@ -940,6 +940,8 @@ $pdf->Output();
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
 
                 if ($columna['Field'] != 'id') {
+                    
+                    $contenido .= "<?php # $plugin ?>\n";                     
                     $contenido .= '<div class="form-group">
                 <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
                 <div class="col-sm-8">';
@@ -949,14 +951,11 @@ $pdf->Output();
                             bdd_campo($columna['Type'], $columna['Field'])
                     ;
 
-
-
-
-
-
-
                     $contenido .= '</div>	
-                            </div>' . "\n\n";
+                            </div> \n'; 
+                    $contenido .= "<?php # /$plugin ?>"; 
+                    echo "\n\n";
+                    
                 }
             }
 
