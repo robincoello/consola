@@ -334,8 +334,8 @@ if ($a !="delete") {
     array_push($error, "Action error");
 }
 
-if (! is_id($id)) {
-    array_push($error, "Id Error");
+if (! ' . $plugin . '_is_id($id)) {
+    array_push($error, \'Id format error \');
 }
 ################################################################################
 $' . $plugin . ' = ' . $plugin . '_details($id);
@@ -377,12 +377,12 @@ if ($a !="deleteOk") {
     array_push($error, "Action error");
 }
 
-if (! is_id($id)) {
-    array_push($error, "Id Error");
+if (! ' . $plugin . '_is_id($id)) {
+    array_push($error, \'Id format error\');
 }
 ################################################################################
 
-if ( !$error && $a == "deleteOk") {
+if ( !$error) {
     
         ' . $plugin . '_delete(
                 $id
@@ -391,7 +391,7 @@ if ( !$error && $a == "deleteOk") {
         header("Location: index.php?c=' . $plugin . '");
          
 }
-//include "www/' . $plugin . '/views/delete.php"; 
+
 include view("' . $plugin . '", "delete");  
 ';     
 
@@ -427,17 +427,15 @@ if (! $id) {
 
 ################################################################################
 
-if (! is_id($id)) {
-    array_push($error, "ID format error");
+if (! ' . $plugin . '_is_id($id)) {
+    array_push($error, \'ID format error\');
 }
 ################################################################################
 if (!$error) {
-    $' . $plugin . ' = ' . $plugin . '_details($id);
-    //include "www/' . $plugin . '/views/details.php";
+    $' . $plugin . ' = ' . $plugin . '_details($id);    
     include view("' . $plugin . '", "details");      
 } else {
-    array_push($error, "Check your form");
-     //include "www/' . $plugin . '/views/index.php";
+    array_push($error, "Check your form");    
      include view("' . $plugin . '", "index");      
 }
 
@@ -475,18 +473,18 @@ if (!$id) {
 if ($a != "edit") {
     array_push($error, "Action format error");
 }
-if (!is_id($id)) {
+if (! ' . $plugin . '_is_id($id)) {
     array_push($error, "ID format error");
 }
    
 ################################################################################
 if (!$error) {
     $' . $plugin . ' = ' . $plugin . '_details($id);
-    //include "www/' . $plugin . '/views/edit.php";
+    
     include view("' . $plugin . '", "edit");      
 } else {
     array_push($error, "Check your form");
-     //include "www/' . $plugin . '/views/index.php";
+    
      include view("' . $plugin . '", "index");      
 }
 
@@ -545,7 +543,7 @@ if (! $text) {
 //
 ################################################################################
 
-if (! is_id($id)) {
+if (! ' . $plugin . '_is_id($id)) {
     array_push($error, "ID format error");
 }
 //
@@ -578,7 +576,6 @@ if (! $error ) {
 
 $' . $plugin . ' = ' . $plugin . '_details($id);
     
-//include "www/' . $plugin . '/views/index.php";
 include view("' . $plugin . '", "index");  
 ';
             break;
