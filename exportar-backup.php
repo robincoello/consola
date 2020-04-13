@@ -1590,12 +1590,27 @@ function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {
         $c .= "<option value=\"$value[$k]\" $s $d >$value[$k] - $value[$v]</option>" ;
     }    
     echo  $c;     
-}
+}';
+    
+    
+     //$i = 0;
+    foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+        //$coma = ($i < bdd_total_columnas_segun_tabla($plugin) - 1 ) ? "," : "";
+        $contenido .= 'function '.$plugin.'_is_' . $columna['Field'] . '($' . $columna['Field'] . '){' . "\n";
+        $contenido .= '     return true;' . "\n";
+        $contenido .= '}' . "\n" ;
+        
 
-';
-
+       // $i++;
+    }    
+   
+    
+   
     return $contenido;
 }
+
+
+
 
 function crear_carpeta($carpeta) {
     $cmd = "mkdir -p $carpeta";
