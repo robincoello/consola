@@ -219,7 +219,10 @@ if (!permissions_has_permission($u_rol, $c, "create")) {
     die("Error has permission ");
 }
 
-include "www/' . $plugin . '/views/add.php";';
+//include "www/' . $plugin . '/views/add.php";
+include view("' . $plugin . '", "add");                 
+';
+            
             break;
 
 
@@ -295,7 +298,9 @@ if (!$error) {
     array_push($error, "Check your form");
 }
 
-include "www/' . $plugin . '/views/index.php";';
+//include "www/' . $plugin . '/views/index.php";   
+include view("' . $plugin . '", "index");  
+';
             break;
 
 
@@ -336,7 +341,9 @@ if (! is_id($id)) {
 $' . $plugin . ' = ' . $plugin . '_details($id);
 
 
-include "www/' . $plugin . '/views/delete.php";';
+//include "www/' . $plugin . '/views/delete.php"; 
+include view("' . $plugin . '", "delete");  
+';    
             break;
 
 
@@ -384,7 +391,10 @@ if ( !$error && $a == "deleteOk") {
         header("Location: index.php?c=' . $plugin . '");
          
 }
-include "www/' . $plugin . '/views/delete.php";';
+//include "www/' . $plugin . '/views/delete.php"; 
+include view("' . $plugin . '", "delete");  
+';     
+
             break;
 
 
@@ -423,10 +433,12 @@ if (! is_id($id)) {
 ################################################################################
 if (!$error) {
     $' . $plugin . ' = ' . $plugin . '_details($id);
-    include "www/' . $plugin . '/views/details.php";
+    //include "www/' . $plugin . '/views/details.php";
+    include view("' . $plugin . '", "details");      
 } else {
     array_push($error, "Check your form");
-     include "www/' . $plugin . '/views/index.php";
+     //include "www/' . $plugin . '/views/index.php";
+     include view("' . $plugin . '", "index");      
 }
 
 ';
@@ -470,10 +482,12 @@ if (!is_id($id)) {
 ################################################################################
 if (!$error) {
     $' . $plugin . ' = ' . $plugin . '_details($id);
-    include "www/' . $plugin . '/views/edit.php";
+    //include "www/' . $plugin . '/views/edit.php";
+    include view("' . $plugin . '", "edit");      
 } else {
     array_push($error, "Check your form");
-     include "www/' . $plugin . '/views/index.php";
+     //include "www/' . $plugin . '/views/index.php";
+     include view("' . $plugin . '", "index");      
 }
 
 ';
@@ -564,8 +578,8 @@ if (! $error ) {
 
 $' . $plugin . ' = ' . $plugin . '_details($id);
     
-include "www/' . $plugin . '/views/index.php";
-
+//include "www/' . $plugin . '/views/index.php";
+include view("' . $plugin . '", "index");  
 ';
             break;
 
@@ -586,8 +600,8 @@ $' . $plugin . ' = null;
 
 $' . $plugin . ' = ' . $plugin . '_list();
 
-include "www/' . $plugin . '/views/export_json.php";
-
+//include "www/' . $plugin . '/views/export_json.php";
+include view("' . $plugin . '", "export_json");  
 if ($debug) {
     include "www/' . $plugin . '/views/debug.php";
 }';
@@ -604,7 +618,9 @@ if (!permissions_has_permission($u_rol, $c, "read")) {
 $error = array();
 $' . $plugin . ' = null;
 $' . $plugin . ' = ' . $plugin . '_list();
-include "www/' . $plugin . '/views/export_pdf.php";
+    
+//include "www/' . $plugin . '/views/export_pdf.php";
+include view("' . $plugin . '", "export_pdf");      
 if ($debug) {
     include "www/' . $plugin . '/views/debug.php";
 }';
@@ -630,8 +646,9 @@ if (!permissions_has_permission($u_rol, $c, "read")) {
 $error = array();
 $' . $plugin . ' = null;
 $' . $plugin . ' = ' . $plugin . '_list(10, 5);
-include "www/' . $plugin . '/views/index.php";
-//include "./www/home/views/index.php";
+    
+//include "www/' . $plugin . '/views/index.php";
+include view("' . $plugin . '", "index");  
 if ($debug) {
     include "www/' . $plugin . '/views/debug.php";
 }';
@@ -664,7 +681,8 @@ switch ($w) {
         break;
 }
 
-include "www/' . $plugin . '/views/index.php";
+//include "www/' . $plugin . '/views/index.php";
+include view("' . $plugin . '", "index");      
 ';
             break;
 
@@ -680,7 +698,8 @@ if (!permissions_has_permission($u_rol, $c, "read")) {
 }
 
 
-include "www/' . $plugin . '/views/search_advanced.php";
+//include "www/' . $plugin . '/views/search_advanced.php";
+include view("' . $plugin . '", "search_advanced");      
 ';
             break;
 
@@ -1590,7 +1609,7 @@ function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {
         $c .= "<option value=\"$value[$k]\" $s $d >$value[$k] - $value[$v]</option>" ;
     }    
     echo  $c;     
-}';
+}' . "\n";
     
     
      //$i = 0;
@@ -1598,7 +1617,7 @@ function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {
         //$coma = ($i < bdd_total_columnas_segun_tabla($plugin) - 1 ) ? "," : "";
         $contenido .= 'function '.$plugin.'_is_' . $columna['Field'] . '($' . $columna['Field'] . '){' . "\n";
         $contenido .= '     return true;' . "\n";
-        $contenido .= '}' . "\n" ;
+        $contenido .= '}' . "\n\n" ;
         
 
        // $i++;
