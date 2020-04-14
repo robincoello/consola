@@ -1,5 +1,5 @@
 <?php
-
+include "campos.php"; 
 
 function bdd_referencias($tabla, $columna) {
 

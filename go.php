@@ -1,6 +1,7 @@
 <?php
 
 include './config.php';
+include './campos.php';
 include './exportar-backup.php';
 
 
