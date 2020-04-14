@@ -1383,7 +1383,7 @@ $pdf->Output();
         }
         ?>
        
-        <?php include view("' . $plugin . '", "search_advanced"); ?>
+        <?php include view("' . $plugin . '", "form_search_advanced"); ?>
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">       
