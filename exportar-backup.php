@@ -1052,8 +1052,8 @@ $pdf->Output();
             
             
             
-        ## search_advanced.php.php
-        case "search_advanced.php":
+        ## form_search_advanced.php.php
+        case "form_search_advanced.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
     <input type="hidden" name="c" value="' . $plugin . '">
     <input type="hidden" name="a" value="editOk">
