@@ -1186,43 +1186,7 @@ $pdf->Output();
 ';
             break;
 
-        ## form_edit.php
-        case "form_search_advanced.php":
-            $contenido = '<form class="form-horizontal" action="index.php" method="get" >
-    <input type="hidden" name="c" value="' . $plugin . '">
-    <input type="hidden" name="a" value="search">
-    <input type="hidden" name="w" value="s_a">
-
-
-
-    ';
-
-            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
-                $contenido .= 'echo "<div class="form-group">
-        <label class="control-label col-sm-2" for="contact_id"><?php _t("Text"); ?></label>
-        <div class="col-sm-8">                    
-            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="" >
-        </div>	
-    </div>";' . "\n";
-            }
-
-            $contenido .= '
-
-
-
-
-
-
-    <div class="form-group">
-        <label class="control-label col-sm-2" for=""></label>
-        <div class="col-sm-8">    
-            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Search"); ?>">
-        </div>      							
-    </div>      							
-
-</form>';
-            break;
+        
 
         ## index.php
         case "index.php":
