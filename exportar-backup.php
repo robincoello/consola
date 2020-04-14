@@ -118,18 +118,7 @@ function bdd_add_en_magia($tabla, $campo, $accion, $label, $tipo, $tabla_externa
     ));
 }
 
-function bdd_tipo_campo($tipo) {
-    /*
-     *   global $db;
-      $data = null;
-      $req = $db->prepare("SELECT tipo FROM :tabla WHERE campo=:campo");
-      $req->execute(array(
-      "tabla" => $tabla,
-      "campo" => $campo
-      ));
-      $data = $req->fetch();
-      return $data[0];
-     */
+function bdd_tipo_campo($tipo) {    
 
     $t = false;
     if (strpos($tipo, "int(1)") !== false) {
@@ -148,9 +137,10 @@ function bdd_tipo_campo($tipo) {
     if (strpos($tipo, "timestamp") !== false) {
         $t = "timestamp";
     }
-
     return $t;
 }
+
+
 
 function bdd_campo($tipo, $name) {
     global $plugin;
@@ -1062,8 +1052,8 @@ $pdf->Output();
             
             
             
-        ## form_edit.php
-        case "form_edit.php":
+        ## search_advanced.php.php
+        case "search_advanced.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
     <input type="hidden" name="c" value="' . $plugin . '">
     <input type="hidden" name="a" value="editOk">
@@ -1104,7 +1094,53 @@ $pdf->Output();
 </form>
 ';
             break;
+            
+        ## form_add.php
+        case "form_add.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="get" >
+    <input type="hidden" name="c" value="' . $plugin . '">
+    <input type="hidden" name="a" value="search_advanced">
 
+';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+
+                if ($columna['Field'] != 'id') {
+                    
+                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
+                    $contenido .= '     <div class="form-group">
+        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">'."\n";
+                    // esto es la creacion del campo en si 
+                    ///
+                    ///
+                    ///
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
+
+                    $contenido .= "\n       </div>	
+    </div>" . "\n"; 
+                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
+                    echo "\n\n";
+                    
+                }
+            }
+
+
+
+
+            $contenido .= '  
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Search"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+';
+            break;
+            
+            
         ## search.php
         case "search.php":
             $contenido = '<?php include view("home", "header"); ?> 
@@ -1391,7 +1427,7 @@ $pdf->Output();
         </h1>
 
 
-        <?php include "form_search_advanced.php"; ?>
+        
         <?php include view("' . $plugin . '", "form_search_advanced"); ?>
 
 
@@ -1662,6 +1698,7 @@ function crear_plugin($plugin) {
         "form_edit.php",
         "form_details.php",
         "form_delete.php",
+        "form_search_advanced.php",
         "index.php",
         "izq.php",
         "nav.php",
