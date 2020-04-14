@@ -1045,10 +1045,10 @@ $pdf->Output();
             
         ## form_search_advanced.php.php
         case "form_search_advanced.php":
-            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+            $contenido = '<form class="form-horizontal" action="index.php" method="get" >
     <input type="hidden" name="c" value="' . $plugin . '">
-    <input type="hidden" name="a" value="editOk">
-    <input type="hidden" name="id" value="<?php echo "$id"; ?>">
+    <input type="hidden" name="a" value="search_advanced">
+    
     
    
 
@@ -1063,7 +1063,7 @@ $pdf->Output();
                     $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
-            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo $' . $plugin . '[\'' . $columna['Field'] . '\']?>">
+            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="">
         </div>	
     </div>' . "\n";
                     $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
