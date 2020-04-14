@@ -890,7 +890,7 @@ $pdf->Output();
                     ///
                     ///
                     //$contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
-                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
@@ -1099,7 +1099,7 @@ $pdf->Output();
                     ///
                     ///
                     ///
-                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field']) : "          " . campos_crear_campo($columna['Type'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
@@ -1658,7 +1658,7 @@ function crear_plugin($plugin) {
 foreach (bdd_columnas_segun_tabla($plugin) as $campo) {
 
     //echo $campo['Field'] . " \n" ; 
-    $tipo = bdd_tipo_campo($campo['Type']);
+    $tipo = campos_tipo($campo['Type']);
 
     $te = bdd_referencias($plugin, $campo['Field']);
 
