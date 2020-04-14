@@ -801,7 +801,7 @@ function contenido_views($plugin, $archivo) {
 
         ## details.php
         case "details.php":
-            $contenido = '<?php // include view("home", "header"); ?> 
+            $contenido = '<?php  include view("home", "header"); ?> 
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
