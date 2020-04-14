@@ -788,7 +788,6 @@ function contenido_views($plugin, $archivo) {
 ';
             break;
 
-
         ## details.php
         case "details.php":
             $contenido = '<?php  include view("home", "header"); ?> 
@@ -830,11 +829,7 @@ function contenido_views($plugin, $archivo) {
 <?php include view("home", "footer"); ?>
 
 ';
-            break;
-
-
-        
-        
+            break;               
         
         ## edit.php
         case "edit.php":
@@ -927,7 +922,6 @@ $pdf->Output();
 ';
             break;
 
-
         ## form_add.php
         case "form_add.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
@@ -1012,7 +1006,6 @@ $pdf->Output();
 ';
             break;
 
-
         ## form_delete.php
         case "form_delete.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
@@ -1048,9 +1041,7 @@ $pdf->Output();
 </form>
 
 ';
-            break;
-            
-            
+            break;                        
             
         ## form_search_advanced.php.php
         case "form_search_advanced.php":
@@ -1139,8 +1130,7 @@ $pdf->Output();
 </form>
 ';
             break;
-            
-            
+                        
         ## search.php
         case "search.php":
             $contenido = '<?php include view("home", "header"); ?> 
@@ -1185,9 +1175,7 @@ $pdf->Output();
 
 ';
             break;
-
         
-
         ## index.php
         case "index.php":
             $contenido = '<?php include view("home", "header"); ?>  
@@ -1312,8 +1300,6 @@ $pdf->Output();
 ';
             break;
 
-
-
         ## izq.php.php
         case "izq.php":
             $contenido = '
@@ -1326,7 +1312,6 @@ $pdf->Output();
      <a href="index.php?c=' . $plugin . '&a=add" class="list-group-item"><?php _t("Add"); ?></a> 
 </div>';
             break;
-
 
         ## nav.php
         case "nav.php":
@@ -1372,50 +1357,11 @@ $pdf->Output();
   </div><!-- /.container-fluid -->
 </nav>';
             break;
-
-
-        ## search_advanced.php
-        case "search_advanced.php":
-            $contenido = '<?php include view("home", "header"); ?>  
-
-<div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include view("' . $plugin . '", "izq"); ?>
-    </div>
-
-    <div class="col-sm-6 col-md-6 col-lg-6">
-
-        <h1>    
-            <i class="fas fa-language"></i>
-            <?php _t("Search advanced"); ?>
-        </h1>
-
-
         
-        <?php include view("' . $plugin . '", "form_search_advanced"); ?>
-
-
-    </div>
-
-    <div class="col-sm-3 col-md-3 col-lg-3">
-
-        <?php // include view("' . $plugin . '", "der"); ?>
-    </div>
-</div>
-
-
-<?php include view("home", "footer"); ?>
-
-';
-            break;
-
         ## xxxxxxx.php
         case "xxxxxxxxx.php":
             $contenido = '';
             break;
-
-
-
 
         default:
             $contenido = "------------";
