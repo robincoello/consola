@@ -889,7 +889,7 @@ $pdf->Output();
                     ///
                     ///
                     //$contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
-                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field'], $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
     </div>" . "\n"; 
