@@ -118,85 +118,6 @@ function bdd_add_en_magia($tabla, $campo, $accion, $label, $tipo, $tabla_externa
     ));
 }
 
-function bdd_tipo_campo($tipo) {    
-
-    $t = false;
-    if (strpos($tipo, "int(1)") !== false) {
-        $t = "boolean";
-    }
-    if (strpos($tipo, "int(11)") !== false) {
-        $t = "int";
-    }
-
-    if (strpos($tipo, "varchar(") !== false) {
-        $t = "text";
-    }
-    if (strpos($tipo, "date") !== false) {
-        $t = "date";
-    }
-    if (strpos($tipo, "timestamp") !== false) {
-        $t = "timestamp";
-    }
-    return $t;
-}
-
-
-
-function bdd_campo($tipo, $name) {
-    global $plugin;
-
-
-    $te = bdd_referencias($plugin, $name);
-
-    //echo var_dump($tabla_externa);
-    $tabla_externa = ( $te['REFERENCED_TABLE_NAME']) ? $te['REFERENCED_TABLE_NAME'] : "";
-    $columna_externa = ( $te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";
-
-    switch ($tipo) {
-
-        case 'select':
-            $campo = '<select  name="' . $name . '" class="form-control" id="' . $tabla_externa . '">                                
-                <?php ' . $tabla_externa . '_select("' . $columna_externa . '","' . $columna_externa . '", array(), array()); ?>                        
-                </select>';
-            break;
-
-        case 'boolean':
-            $campo = '<select type="date"  name="' . $name . '" class="form-control" id="' . $name . '">                
-                <option value="0">0</option>
-                <option value="1">1</option>                
-                </select>';
-            break;
-
-        
-        
-        case 'int':            
-            $campo = '<input type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="int">';            
-            break;
-
-        
-        case 'text':            
-            $campo = '<textarea type="number"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="text"></textarea>';            
-            break;
-
-        
-        case 'date':            
-            $campo = '<input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="date">';
-            
-            break;
-
-        case 'timestamp':            
-            $campo = '<input type="date"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="timestamp">';            
-            break;
-
-        default:           
-            $campo = '<input type="text"  name="' . $name . '" class="form-control" id="' . $name . '" placeholder="' . $tipo . ' defecto">';
-           
-            break;
-    }
-
-    return $campo;
-}
-
 function contenido_controllers($plugin, $archivo) {
 
     switch ($archivo) {
@@ -930,6 +851,8 @@ $pdf->Output();
 
 ';
 
+            /*
+            
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
 
                 if ($columna['Field'] != 'id') {
@@ -952,7 +875,35 @@ $pdf->Output();
                 }
             }
 
+*/
+            
+              foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                  
+                if ($columna['Field'] != 'id') {
+                    
+                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
+                    $contenido .= '     <div class="form-group">
+        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">'."\n";
+                    // esto es la creacion del campo en si 
+                    ///
+                    ///
+                    ///
+                    //$contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
+                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
 
+                    $contenido .= "\n       </div>	
+    </div>" . "\n"; 
+                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
+                    echo "\n\n";
+                    
+                }
+            }
+            
+            
+            
+            
+            
 
 
             $contenido .= '  
@@ -1020,13 +971,16 @@ $pdf->Output();
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
                 // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
                 $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
+                if( $columna['Field'] != 'id'){
+                    
+                }
                 $contenido .= '<div class="form-group">
-        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <label class="control-label col-sm-2" for="' . $columna['Field'] . '"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
             <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" >
         </div>	
     </div>' . "\n";
-                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
+                $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
             }
 
             $contenido .= '
