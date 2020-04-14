@@ -858,14 +858,14 @@ function contenido_views($plugin, $archivo) {
         ?>
 
 
-        <?php // include "form_edit.php"; ?>
+        
         <?php include view("' . $plugin . '", "form_edit"); ?>
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
-        <?php // include "der.php";  ?>
+        
         <?php include view("' . $plugin . '", "der"); ?>
     </div>
 </div>
@@ -1006,6 +1006,45 @@ $pdf->Output();
 ';
             break;
 
+        ## form_details.php
+        case "form_details.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+    <input type="hidden" name="c" value="' . $plugin . '">
+    <input type="hidden" name="a" value="editOk">
+    <input type="hidden" name="id" value="<?php echo "$id"; ?>">
+    
+
+
+    ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
+                $contenido .= '<div class="form-group">
+        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">                    
+            <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" disabled="" >
+        </div>	
+    </div>' . "\n";
+                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
+            }
+
+            $contenido .= '
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Edit"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+
+';
+            break;
+
         ## form_delete.php
         case "form_delete.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="post" >
@@ -1047,7 +1086,7 @@ $pdf->Output();
         case "form_search_advanced.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="get" >
     <input type="hidden" name="c" value="' . $plugin . '">
-    <input type="hidden" name="a" value="search_advanced">
+    <input type="hidden" name="a" value="search_advancedOk">
     
     
    
@@ -1387,7 +1426,7 @@ $pdf->Output();
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">       
-        <?php include view("' . $plugin . '", "der"); ?>
+        <?php //include view("' . $plugin . '", "der"); ?>
     </div>
 </div>
 
