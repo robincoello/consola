@@ -3,51 +3,16 @@
 include './config.php';
 include './campos.php';
 include './exportar-backup.php';
-include './bd.php';
 
 
 ################################################################################
 ################################################################################
 echo "-=- MAGIA PHP -=-" . "\n";
-echo "-- Tablas por crear el plugin\n" . "\n";
-$plugins = array();
-
-$i= 1; 
-foreach (bd_tablas($config_db) as $key => $value) {
-    //echo var_dump($value);  
-    $ti = "Tables_in_$config_db";
-        
-    if( ! file_exists("../www/$value[$ti]")){
-        
-        array_push($plugins, $value[$ti]); 
-        
-        //echo "$i - $value[$ti] \n"; 
-    }        
-    $i++;
-}
-
-$i=0; 
-foreach ($plugins as $key => $p) {
-    echo "$i) $p \n";
-    $i++;
-}
-
-
-
-
-echo "Escoja un plugin?\n";
-do {    
-    $opcion = trim(fgets(STDIN)); // lee una línea de STDIN        
-} while ($opcion > count($plugins) || $opcion <= -1 );
-
-//echo var_dump($plugins[$opcion]);
-
-$plugin = $plugins[$opcion]; 
-//echo "---"; 
-//echo $plugin; 
-
-//die();
-
+echo "Nombre del plugin?\n";
+do {
+    $plugin = trim(fgets(STDIN)); // lee una línea de STDIN    
+} while ($plugin == "");
+echo "Creation del plugin $plugin \n";
 ################################################################################
 ################################################################################
 
@@ -63,7 +28,7 @@ echo "Agrego los permisos para admin \n";
 bdd_add_permissions($plugin, "root", 1111);
 
 echo "agrego al menu \n"; 
-bdd_add_en_menu("top", "config", $plugin, "index.php?c=$plugin", "far fa-folder", "0");
+echo var_dump(bdd_add_en_menu("top", "config", $plugin, "?c=$plugin", "far fa-folder", "0"));
 
 echo "Registro en la tabla magia\n"; 
 magia_registrar_en_tabla($plugin); 

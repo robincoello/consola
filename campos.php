@@ -23,20 +23,20 @@ function campos_tipo($SQL_Type) {
 }
 
 
-function campos_crear_campo($tipo, $nombre, $id, $clase ="form_control", $marca_agua="", $valor=""  ) {
-    //global $plugin;
+function campos_crear_campo($tipo, $nombre, $id, $clase ="form-control", $marca_agua="", $valor=""  ) {
+    global $plugin;
 
-/*
-    $te = bdd_referencias($plugin, $name);
+
+    $te = bdd_referencias($plugin, $nombre);
 
     //echo var_dump($tabla_externa);
     $tabla_externa = ( $te['REFERENCED_TABLE_NAME']) ? $te['REFERENCED_TABLE_NAME'] : "";
-    $columna_externa = ( $te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";*/
+    $columna_externa = ( $te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";
 
     switch ($tipo) {
 
         case 'select':
-            $campo = '<select  name="' . $name . '" class="' . $clase . '" id="' . $id . '">                                
+            $campo = '<select  name="' . $nombre . '" class="' . $clase . '" id="' . $id . '">                                
                 <?php ' . $tabla_externa . '_select("' . $columna_externa . '","' . $columna_externa . '", array(), array()); ?>                        
                 </select>';
             break;

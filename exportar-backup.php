@@ -53,6 +53,8 @@ function bdd_add_controllers($plugin) {
     $req->execute(array(
         "plugin" => "$plugin"
     ));
+
+    return $db->lastInsertId();
 }
 
 function bdd_add_permissions($plugin, $rol, $permiso) {
@@ -68,35 +70,39 @@ function bdd_add_permissions($plugin, $rol, $permiso) {
     ));
 }
 
-function bdd_add_en_menu($ubicacion, $padre, $label, $url, $icono, $orden) {
+function bdd_add_en_menu($location, $father, $label, $url, $icon, $order_by) {
     global $db;
 
     $req = $db->prepare("            
-             INSERT INTO `_menus` (`id`, `ubicacion`, `padre`, `label`, `url`, `icono`, `orden`) 
-                            VALUES (:id, :ubicacion, :padre, :label, :url, :icono, :orden);
+             INSERT INTO `_menus` (`id`, `location`, `father`, `label`, `url`, `icon`, `order_by`) 
+                            VALUES (:id, :location, :father, :label, :url, :icon, :order_by);
             ");
     $req->execute(array(
         "id" => null,
-        "ubicacion" => $ubicacion,
-        "padre" => $padre,
+        "location" => $location,
+        "father" => $father,
         "label" => $label,
         "url" => $url,
-        "icono" => $icono,
-        "orden" => $orden
+        "icon" => $icon,
+        "order_by" => $order_by
     ));
+    return $db->lastInsertId();
 }
 
-function bdd_add_en_magia($tabla, $campo, $accion, $label, $tipo, $tabla_externa, $columna_externa, $clase, $nombre, $identificador, $marca_agua, $valor, $solo_lectura = null, $obligatorio = null, $seleccionado = null, $desactivado = null, $orden = null, $estatus = null) {
+function bdd_add_en_magia($base_datos, $tabla, $campo, $accion, $label, $tipo, $tabla_externa, $columna_externa, $clase, $nombre, $identificador, $marca_agua, $valor, $solo_lectura = null, $obligatorio = null, $seleccionado = null, $desactivado = null, $orden = null, $estatus = null) {
     global $db;
 
     $req = $db->prepare("
            
-            INSERT INTO `magia` (`id`, `tabla`, `campo`, `accion`, `label`, `tipo`, `tabla_externa`, `columna_externa`, `clase`, `nombre`, `identificador`, `marca_agua`, `valor`, `solo_lectura`, `obligatorio`, `seleccionado`, `desactivado`, `orden`, `estatus`)                         VALUES (:id, :tabla, :campo, :accion, :label, :tipo, :tabla_externa, :columna_externa,  :clase, :nombre, :identificador, :marca_agua, :valor, :solo_lectura, :obligatorio, :seleccionado, :desactivado, :orden, :estatus);
+            INSERT INTO `magia` (`id`, `base_datos`, `tabla`, `campo`, `accion`, `label`, `tipo`, `tabla_externa`, `columna_externa`, `clase`, `nombre`, `identificador`, `marca_agua`, `valor`, `solo_lectura`, `obligatorio`, `seleccionado`, `desactivado`, `orden`, `estatus`)                         
+                         VALUES (:id,  :base_datos,  :tabla,  :campo,  :accion,  :label,  :tipo,  :tabla_externa,  :columna_externa,  :clase, :nombre, :identificador, :marca_agua, :valor, :solo_lectura, :obligatorio, :seleccionado, :desactivado, :orden, :estatus);
            
+
            ");
     $req->execute(array(
         "id" => null,
         "tabla" => $tabla,
+        "base_datos" => $base_datos,
         "campo" => $campo,
         "accion" => $accion,
         "label" => $label,
@@ -132,7 +138,7 @@ if (!permissions_has_permission($u_rol, $c, "create")) {
 //include "www/' . $plugin . '/views/add.php";
 include view("' . $plugin . '", "add");                 
 ';
-            
+
             break;
 
 
@@ -161,20 +167,46 @@ $error = array();
 
 
 ';
+            
+            
+            
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
                 if ($columna['Field'] != 'id') {
                     //$contenido .= '$text = (isset($_POST["'.$columna['Field'].'"])) ? clean($_POST["'.$columna['Field'].'"]) : false;';                                                                         
                     $contenido .= 'if (!$' . $columna['Field'] . ') {
     array_push($error, \'$' . $columna['Field'] . ' not send\');
-}';
+}' . "\n";
                 }
             }
+            
+            
+            
+            
+            
+            
             $contenido .= '  
                 
 
 
 #************************************************************************
 // Busca si uya existe el texto en la BD
+';
+            
+            
+            
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                if ($columna['Key'] == 'UNI') {                    
+                    $contenido .= '
+if( ' . $plugin . '_search_by_unique("id","' . $columna['Field'] . '", $' . $columna['Field'] . ')){
+    array_push($error, \'' . $columna['Field'] . ' already exists in data base\');
+}
+' . "\n";
+                }
+            }
+            
+            
+       
+            $contenido .= '  
 
 if( ' . $plugin . '_search($' . $columna['Field'] . ')){
     //array_push($error, "That text with that context the database already exists");
@@ -182,7 +214,7 @@ if( ' . $plugin . '_search($' . $columna['Field'] . ')){
 
 
 if (!$error) {
-    ' . $plugin . '_add(
+    $lastInsertId = ' . $plugin . '_add(
             
             
 ';
@@ -200,7 +232,7 @@ if (!$error) {
 
     );
               
-    header("Location: index.php?c=' . $plugin . '");
+    header("Location: index.php?c=' . $plugin . '&a=details&id=$lastInsertId");
 
     
 } else {
@@ -253,7 +285,7 @@ $' . $plugin . ' = ' . $plugin . '_details($id);
 
 //include "www/' . $plugin . '/views/delete.php"; 
 include view("' . $plugin . '", "delete");  
-';    
+';
             break;
 
 
@@ -303,7 +335,7 @@ if ( !$error) {
 }
 
 include view("' . $plugin . '", "delete");  
-';     
+';
 
             break;
 
@@ -341,6 +373,13 @@ if (! ' . $plugin . '_is_id($id)) {
     array_push($error, \'ID format error\');
 }
 ################################################################################
+
+if (! ' . $plugin . '_field_id("*", $id)) {
+    array_push($error, "id not exist");
+}
+
+
+
 if (!$error) {
     $' . $plugin . ' = ' . $plugin . '_details($id);    
     include view("' . $plugin . '", "details");      
@@ -749,17 +788,16 @@ function contenido_views($plugin, $archivo) {
 <?php include view("home", "footer"); ?>
 
 ';
-            break;               
-        
+            break;
+
         ## edit.php
         case "edit.php":
             $contenido = '<?php //include("www/home/views/header.php"); ?>  
 <?php include view("home", "header"); ?>                
 
 <div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include "izq.php"; ?>
-        <?php include view("' . $plugin . '", "izq"); ?>
+    <div class="col-sm-3 col-md-3 col-lg-3">       
+        <?php //include view("' . $plugin . '", "izq"); ?>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
@@ -832,7 +870,7 @@ function contenido_views($plugin, $archivo) {
         ## export_pdf.php
         case "export_pdf.php":
             $contenido = '<?php
-require("fpdf/fpdf.php");
+require("includes/fpdf/fpdf.php");
 
 $pdf = new FPDF();
 $pdf->AddPage("L");
@@ -851,39 +889,39 @@ $pdf->Output();
 ';
 
             /*
-            
+
+              foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+
+              if ($columna['Field'] != 'id') {
+
+              $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";
+              $contenido .= '     <div class="form-group">
+              <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+              <div class="col-sm-8">'."\n";
+              // esto es la creacion del campo en si
+              ///
+              ///
+              ///
+              $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
+
+              $contenido .= "\n       </div>
+              </div>" . "\n";
+              $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n";
+              echo "\n\n";
+
+              }
+              }
+
+             */
+
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
 
                 if ($columna['Field'] != 'id') {
-                    
-                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
-                    $contenido .= '     <div class="form-group">
-        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
-        <div class="col-sm-8">'."\n";
-                    // esto es la creacion del campo en si 
-                    ///
-                    ///
-                    ///
-                    $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
 
-                    $contenido .= "\n       </div>	
-    </div>" . "\n"; 
-                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
-                    echo "\n\n";
-                    
-                }
-            }
-
-*/
-            
-              foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                  
-                if ($columna['Field'] != 'id') {
-                    
-                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
+                    $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n";
                     $contenido .= '     <div class="form-group">
-        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
-        <div class="col-sm-8">'."\n";
+        <label class="control-label col-sm-2" for="' . $columna['Field'] . '"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">' . "\n";
                     // esto es la creacion del campo en si 
                     ///
                     ///
@@ -892,17 +930,16 @@ $pdf->Output();
                     $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field'], $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']), $columna['Field'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
-    </div>" . "\n"; 
-                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
+    </div>" . "\n";
+                    $contenido .= '<?php # /' . $columna['Field'] . ' ?>' . "\n\n";
                     echo "\n\n";
-                    
                 }
             }
-            
-            
-            
-            
-            
+
+
+
+
+
 
 
             $contenido .= '  
@@ -930,14 +967,14 @@ $pdf->Output();
 
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
                 // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
-                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
+                $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n";
                 $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
             <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" disabled="" >
         </div>	
     </div>' . "\n";
-                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
+                $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n\n";
             }
 
             $contenido .= '
@@ -968,18 +1005,19 @@ $pdf->Output();
     ';
 
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
-                $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
-                if( $columna['Field'] != 'id'){
-                    
-                }
-                $contenido .= '<div class="form-group">
+
+
+                if ($columna['Field'] != 'id') {
+                    // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                    $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n";
+                    $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="' . $columna['Field'] . '"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
-            <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" >
+            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$' . $plugin . '[' . $columna['Field'] . ']"; ?>" >
         </div>	
     </div>' . "\n";
-                $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
+                    $contenido .= '<?php # /' . $columna['Field'] . ' ?>' . "\n\n";
+                }
             }
 
             $contenido .= '
@@ -1033,8 +1071,8 @@ $pdf->Output();
 </form>
 
 ';
-            break;                        
-            
+            break;
+
         ## form_search_advanced.php.php
         case "form_search_advanced.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="get" >
@@ -1051,14 +1089,14 @@ $pdf->Output();
 
 
                 if ($columna['Field'] != 'id') {
-                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n"; 
+                    $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n";
                     $contenido .= '<div class="form-group">
         <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">                    
             <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="">
         </div>	
     </div>' . "\n";
-                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n\n"; 
+                    $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n\n";
                 }
             }
 
@@ -1077,7 +1115,7 @@ $pdf->Output();
 </form>
 ';
             break;
-            
+
         ## form_add.php
         case "form_add.php":
             $contenido = '<form class="form-horizontal" action="index.php" method="get" >
@@ -1089,11 +1127,11 @@ $pdf->Output();
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
 
                 if ($columna['Field'] != 'id') {
-                    
-                    $contenido .= '<?php # '.$columna['Field'].' ?>' . "\n";                     
+
+                    $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n";
                     $contenido .= '     <div class="form-group">
-        <label class="control-label col-sm-2" for="'.$columna['Field'].'"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
-        <div class="col-sm-8">'."\n";
+        <label class="control-label col-sm-2" for="' . $columna['Field'] . '"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">' . "\n";
                     // esto es la creacion del campo en si 
                     ///
                     ///
@@ -1101,10 +1139,9 @@ $pdf->Output();
                     $contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . campos_crear_campo("select", $columna['Field']) : "          " . campos_crear_campo($columna['Type'], $columna['Field']);
 
                     $contenido .= "\n       </div>	
-    </div>" . "\n"; 
-                    $contenido .= '<?php # /'.$columna['Field'].' ?>' . "\n\n"; 
+    </div>" . "\n";
+                    $contenido .= '<?php # /' . $columna['Field'] . ' ?>' . "\n\n";
                     echo "\n\n";
-                    
                 }
             }
 
@@ -1122,7 +1159,7 @@ $pdf->Output();
 </form>
 ';
             break;
-                        
+
         ## search.php
         case "search.php":
             $contenido = '<?php include view("home", "header"); ?> 
@@ -1167,7 +1204,7 @@ $pdf->Output();
 
 ';
             break;
-        
+
         ## index.php
         case "index.php":
             $contenido = '<?php include view("home", "header"); ?>  
@@ -1200,9 +1237,9 @@ $pdf->Output();
                 <thead>
                     <tr>';
 
-                        foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                            $contenido .= '         <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
-                        }
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                $contenido .= '         <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+            }
 
 
             $contenido .= '                                                                       
@@ -1349,7 +1386,7 @@ $pdf->Output();
   </div><!-- /.container-fluid -->
 </nav>';
             break;
-        
+
         ## search_advanced.php
         case "search_advanced.php":
             $contenido = '
@@ -1387,7 +1424,7 @@ $pdf->Output();
 
 ';
             break;
-                
+
         ## xxxxxxx.php
         case "xxxxxxxxx.php":
             $contenido = '';
@@ -1413,6 +1450,15 @@ function ' . $plugin . '_field_id($field, $id) {
     $data = null;
     $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE id= ?");
     $req->execute(array($id));
+    $data = $req->fetch();
+    return $data[0];
+}
+
+function ' . $plugin . '_search_by_unique($field, $FieldUnique, $valueUnique) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("SELECT $field FROM banks WHERE $FieldUnique = ?");
+    $req->execute(array($valueUnique));
     $data = $req->fetch();
     return $data[0];
 }
@@ -1506,11 +1552,11 @@ function ' . $plugin . '_add(';
 
     $contenido .= ') {
     global $db;
-    $req = $db->prepare(" INSERT INTO ' . $plugin . ' (';
+    $req = $db->prepare(" INSERT INTO `' . $plugin . '` (';
     $i = 0;
     foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
         $coma = ($i < bdd_total_columnas_segun_tabla($plugin) - 1 ) ? "," : "";
-        $contenido .= ' ' . $columna['Field'] . ' ' . $coma . '  ';
+        $contenido .= ' `' . $columna['Field'] . '` ' . $coma . '  ';
 
         $i++;
     }
@@ -1547,6 +1593,8 @@ function ' . $plugin . '_add(';
     $contenido .= '                        
             )
     );
+    
+     return $db->lastInsertId();
 }
 
 
@@ -1579,30 +1627,27 @@ function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {
     foreach (' . $plugin . '_list() as $key => $value) {        
         $s = ($selected == $value[$k])?" selected  ":"";       
         $d = ( in_array($value[$k], $disabled )) ? " disabled ":"";                        
-        $c .= "<option value=\"$value[$k]\" $s $d >$value[$k] - $value[$v]</option>" ;
+        $c .= "<option value=\"$value[$k]\" $s $d >". ucfirst($value[$v])."</option>" ;
     }    
     echo  $c;     
 }' . "\n";
-    
-    
-     //$i = 0;
+
+
+    //$i = 0;
     foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
         //$coma = ($i < bdd_total_columnas_segun_tabla($plugin) - 1 ) ? "," : "";
-        $contenido .= 'function '.$plugin.'_is_' . $columna['Field'] . '($' . $columna['Field'] . '){' . "\n";
+        $contenido .= 'function ' . $plugin . '_is_' . $columna['Field'] . '($' . $columna['Field'] . '){' . "\n";
         $contenido .= '     return true;' . "\n";
-        $contenido .= '}' . "\n\n" ;
-        
+        $contenido .= '}' . "\n\n";
 
-       // $i++;
-    }    
-   
-    
-   
+
+        // $i++;
+    }
+
+
+
     return $contenido;
 }
-
-
-
 
 function crear_carpeta($carpeta) {
     $cmd = "mkdir -p $carpeta";
@@ -1654,24 +1699,28 @@ function crear_plugin($plugin) {
     }
 }
 
-foreach (bdd_columnas_segun_tabla($plugin) as $campo) {
-
-    //echo $campo['Field'] . " \n" ; 
-    $tipo = campos_tipo($campo['Type']);
-
-    $te = bdd_referencias($plugin, $campo['Field']);
-
-    //echo var_dump($tabla_externa);
-    $tabla_externa = ($te['REFERENCED_TABLE_NAME']) ? $te['REFERENCED_TABLE_NAME'] : "";
-    $columna_externa = ($te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";
+function magia_registrar_en_tabla($plugin) {
+    global $config_db; 
 
 
-    echo "la tabla externa es: $tabla_externa \n";
-    echo "la columlna externa es: $columna_externa \n";
+    foreach (bdd_columnas_segun_tabla($plugin) as $campo) {
+
+        //echo $campo['Field'] . " \n" ; 
+        $tipo = campos_tipo($campo['Type']);
+
+        $te = bdd_referencias($plugin, $campo['Field']);
+
+        //echo var_dump($tabla_externa);
+        $tabla_externa = ($te['REFERENCED_TABLE_NAME']) ? $te['REFERENCED_TABLE_NAME'] : "";
+        $columna_externa = ($te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";
 
 
-    foreach (array("ver", "crear", "editar", "borrar") as $crud) {
-        bdd_add_en_magia($plugin, $campo['Field'], $crud, $campo['Field'], $tipo, $tabla_externa, $columna_externa, "form-control", $campo['Field'], $campo['Field'], $campo['Field'], "valor");
+        echo "la tabla externa es: $tabla_externa \n";
+        echo "la columlna externa es: $columna_externa \n";
+
+
+        foreach (array("ver", "crear", "editar", "borrar") as $crud) {            
+            bdd_add_en_magia($config_db, $plugin, $campo['Field'], $crud, $campo['Field'], $tipo, $tabla_externa, $columna_externa, "form-control", $campo['Field'], $campo['Field'], $campo['Field'], "valor");
+        }
     }
 }
-
