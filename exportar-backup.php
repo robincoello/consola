@@ -1235,15 +1235,14 @@ $pdf->Output();
 
             <table class="table table-striped">
                 <thead>
-                    <tr>';
+                    <tr>' . "\n";
 
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                $contenido .= '         <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+                $contenido .= '                      <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
             }
 
-
             $contenido .= '                                                                       
-                        <th><?php _t("Action"); ?></th>                                                                      
+                      <th><?php _t("Action"); ?></th>                                                                      
                     </tr>
                 </thead>
                 <tbody>
@@ -1275,19 +1274,23 @@ $pdf->Output();
                          //   $photo = addresses_photos_principal($address["id"]);
                          //   $contact_name = contacts_field_id("name", $' . $plugin . '["contact_id"]);
                          //   $contact_lastname = contacts_field_id("lastname", $' . $plugin . '["contact_id"]);
+                         ';   
+                           
+            
+                         $contenido .='echo "<tr id=\\"$'.$plugin.'[id]\\">"; ' . "\n";
                             
-                            echo "<tr>";                            
                             
                             
-                            
-            ';
+            
+            
+            
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= '                         echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
             }
 
 
             $contenido .= '                              
-                            echo "<td>$menu</td>";
+                         echo "<td>$menu</td>";
                           
                             echo "</tr>";
                         }
@@ -1299,7 +1302,7 @@ $pdf->Output();
                         ';
 
             foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
-                $contenido .= '<th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+                $contenido .= '                     <th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
             }
 
 
