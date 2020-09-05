@@ -1316,7 +1316,8 @@ function ' . $plugin . '_field_id($field, $id) {
     $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE id= ?");
     $req->execute(array($id));
     $data = $req->fetch();
-    return $data[0];
+    //return $data[0];
+    return (isset($data[0]))??false;
 }
 
 function ' . $plugin . '_list() {
@@ -1331,7 +1332,8 @@ function ' . $plugin . '_list() {
         "limit" => $limit
     ));
     $data = $req->fetchall();
-    return $data;
+    //return $data;
+    return (isset($data[0]))??false;
 }
 
 function ' . $plugin . '_details($id) {

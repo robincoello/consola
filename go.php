@@ -2,7 +2,7 @@
 
 include './config.php';
 include './campos.php';
-include './exportar-backup.php';
+include './v2.php';
 include './bd.php';
 
 
@@ -40,18 +40,23 @@ do {
     $opcion = trim(fgets(STDIN)); // lee una línea de STDIN        
 } while ($opcion > count($plugins) || $opcion <= -1 );
 
+
+
+
+
+
 //echo var_dump($plugins[$opcion]);
 
 $plugin = $plugins[$opcion]; 
-//echo "---"; 
-//echo $plugin; 
 
-//die();
+
+
+
 
 ################################################################################
 ################################################################################
 
-
+//
 crear_plugin($plugin);
 echo "###########################################################\n";
 echo "Registro del plugin como controlador en la base de datos\n";
