@@ -662,7 +662,7 @@ include view("' . $plugin . '", "search_advanced");
 }
 
 function contenido_views($plugin , $archivo) {
-
+    global $config_destino; 
     switch ( $archivo ) {
         ## add.php
         case "add.php":
@@ -670,33 +670,45 @@ function contenido_views($plugin , $archivo) {
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php //include view("' . $plugin . '", "add"); ?>
-    </div>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php //include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php //include "izq.php"; ?>'; 
+            $contenido .='</div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
 
         <h1>
-            <i class="fas fa-map-marker"></i>
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
             <?php _t("Add ' . $plugin . '"); ?>
         </h1>
 
-
-        <?php //include "form_add.php"; ?>
-        <?php include view("' . $plugin . '", "form_add"); ?>
-
-
+        '; 
+            
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "form_add"); ?>'
+                    :
+                    '<?php include "form_add.php"; ?>';            
+    $contenido .='
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
-
-        <?php // include "der.php"; ?>
-        <?php // include view("' . $plugin . '", "der"); ?>
+    
+            ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php // include view("' . $plugin . '", "der"); ?>'
+                    :
+                    '<?php // include "der.php"; ?>'; 
+            
+            
+            $contenido .='
         
     </div>
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
+ 
 <?php include view("home", "footer"); ?>
 
 ' ;
@@ -708,14 +720,18 @@ function contenido_views($plugin , $archivo) {
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include "izq.php"; ?>
-        <?php // include view("' . $plugin . '", "izq"); ?>
+            ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php //include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php //include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
 
         <h1>
-            <i class="fas fa-language"></i>
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
            <?php _t("' . $plugin . ' details"); ?>
         </h1>
         <hr>
@@ -727,21 +743,28 @@ function contenido_views($plugin , $archivo) {
         }
         ?>
 
-
-        <?php // include "form_delete.php"; ?>
-        <?php  include view("' . $plugin . '", "form_delete"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "form_delete"); ?>'
+                    :
+                    '<?php include "form_delete.php"; ?>'; 
+            $contenido .='
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
-        <?php // include "der.php";  ?>
-        <?php // include view("' . $plugin . '", "der"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php //include view("' . $plugin . '", "der"); ?>'
+                    :
+                    '<?php //include "der.php"; ?>'; 
+            $contenido .='
     </div>
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
+
 <?php include view("home", "footer"); ?>
 
 ' ;
@@ -753,13 +776,18 @@ function contenido_views($plugin , $archivo) {
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-        <?php // include view("' . $plugin . '", "izq"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
 
         <h1>
-            <i class="fas fa-language"></i>
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
            <?php _t("' . $plugin . ' details"); ?>
         </h1>
         <hr>
@@ -771,20 +799,32 @@ function contenido_views($plugin , $archivo) {
         }
         ?>
 
+            
 
-        <?php // include "form_details.php"; ?>
-        <?php include view("' . $plugin . '", "form_details"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "form_details"); ?>'
+                    :
+                    '<?php include "form_details.php"; ?>'; 
+            $contenido .='
+                
+
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
-        <?php // include "der.php";  ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php // include view("' . $plugin . '", "der"); ?>'
+                    :
+                    '<?php // include "der.php"; ?>'; 
+            $contenido .='
     </div>
 </div>
 
 
-<?php // include("www/home/views/footer.php"); ?>  
+
 <?php include view("home", "footer"); ?>
 
 ' ;
@@ -792,18 +832,23 @@ function contenido_views($plugin , $archivo) {
 
         ## edit.php
         case "edit.php":
-            $contenido = '<?php //include("www/home/views/header.php"); ?>  
+            $contenido = '
 <?php include view("home", "header"); ?>                
 
 <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">       
-        <?php //include view("' . $plugin . '", "izq"); ?>
+         ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6">
 
         <h1>
-            <i class="fas fa-map-marker"></i>
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
             <?php _t("' . ucfirst($plugin) . ' edit"); ?>
         </h1>
         <hr>
@@ -814,17 +859,26 @@ function contenido_views($plugin , $archivo) {
             }
         }
         ?>
-
-
-        
-        <?php include view("' . $plugin . '", "form_edit"); ?>
+            
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "form_edit"); ?>'
+                    :
+                    '<?php include "form_edit.php"; ?>'; 
+            $contenido .='
 
     </div>
 
     <div class="col-sm-3 col-md-3 col-lg-3">
 
         
-        <?php //include view("' . $plugin . '", "der"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php // include view("' . $plugin . '", "der"); ?>'
+                    :
+                    '<?php // include "der.php"; ?>'; 
+            $contenido .='
+            
     </div>
 </div>
 
@@ -840,7 +894,12 @@ function contenido_views($plugin , $archivo) {
 <div class="row">
     <div class="col-lg-0">
         
-        <?php include view("' . $plugin . '", "izq"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
     <div class="col-lg-12">
@@ -916,24 +975,30 @@ $pdf->Output();
 
             foreach ( bdd_columnas_segun_tabla($plugin) as $columna ) {
 
+              //REFERENCED_TABLE_NAME, 
+             //REFERENCED_COLUMN_NAME 
+                
+                $bdd_referencias  = bdd_referencias($plugin , $columna['Field']); 
+                
+                $bdd_ref_tabla_externa = ($bdd_referencias['REFERENCED_TABLE_NAME'])? $bdd_referencias['REFERENCED_TABLE_NAME'] : false;
+                $bdd_col_externa = ($bdd_referencias['REFERENCED_COLUMN_NAME'])? $bdd_referencias['REFERENCED_COLUMN_NAME'] : false;
+                
+                $campo_select = campos_crear_campo("select" , $columna['Field'] , $columna['Field']); 
+                $campo = campos_crear_campo(campos_tipo($columna['Field']) , $columna['Field'] , $columna['Field']); 
+
                 if ( $columna['Field'] != 'id' ) {
 
                     $contenido .= '<?php # ' . $columna['Field'] . ' ?>' . "\n" ;
                     $contenido .= '     <div class="form-group">
         <label class="control-label col-sm-2" for="' . $columna['Field'] . '"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
         <div class="col-sm-8">' . "\n" ;
-                    // esto es la creacion del campo en si 
-                    ///
-                    ///
-                    ///
-                    //$contenido .= (bdd_referencias($plugin, $columna['Field'])) ? "         " . bdd_campo("select", $columna['Field']) : "          " . bdd_campo($columna['Type'], $columna['Field']);
-                    $contenido .= (bdd_referencias($plugin , $columna['Field'])) ? "         " . campos_crear_campo("select" , $columna['Field'] , $columna['Field']) : "          " . campos_crear_campo(campos_tipo($columna['Field']) , $columna['Field'] , $columna['Field']) ;
-
+                    $contenido .= ( $bdd_ref_tabla_externa ) ? "         " . $campo_select : "          " . $campo ;
                     $contenido .= "\n       </div>	
     </div>" . "\n" ;
                     $contenido .= '<?php # /' . $columna['Field'] . ' ?>' . "\n\n" ;
                     echo "\n\n" ;
                 }
+                
             }
 
 
@@ -1166,7 +1231,12 @@ $pdf->Output();
 
 <div class="row">
     <div class="col-lg-3">
-        <?php include view("' . $plugin . '", "izq"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
 
@@ -1211,11 +1281,21 @@ $pdf->Output();
 
 <div class="row">
     <div class="col-lg-3">
-        <?php include view("' . $plugin . '", "izq"); ?>
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
     </div>
 
     <div class="col-lg-9">
-       <?php include view("' . $plugin . '", "nav"); ?>
+        ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "nav"); ?>'
+                    :
+                    '<?php include "nav.php"; ?>'; 
+            $contenido .='
 
 
         <?php
@@ -1230,9 +1310,161 @@ $pdf->Output();
 
 <?php 
 // https://api.jquery.com/prop/
+?>';
+
+
+$contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "table_index"); ?>'
+                    :
+                    '<?php include "table_index.php"; ?>'; 
+
+$contenido.= '
+
+
+<?php
+/*        
+        Export:
+        <a href="index.php?c=addresses&a=export_json">JSON</a>
+        <a href="index.php?c=addresses&a=export_pdf">pdf</a>
+*/
 ?>
 
 
+    </div>
+</div>
+
+<?php include view("home", "footer"); ?> 
+
+' ;
+            break ;
+
+        ## izq.php.php
+        case "izq.php":
+            $contenido = '
+<div class="list-group">
+    <a href="#" class="list-group-item active">
+        <?php _menu_icon("top" , \''.$plugin.'\'); ?>
+            <?php echo _t("' . ucfirst($plugin) . '"); ?>
+    </a>
+    <a href="index.php?c=' . $plugin . '" class="list-group-item"><?php _t("List"); ?></a>
+     <a href="index.php?c=' . $plugin . '&a=add" class="list-group-item"><?php _t("Add"); ?></a> 
+</div>' ;
+            break ;
+
+        ## nav.php
+        case "nav.php":
+            $contenido = '
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <a class="navbar-brand" href="#">
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
+            <?php _t("' . ucfirst($plugin) . '"); ?>
+        </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        
+      </ul>
+        
+        
+        <form action="index.php" method="get" class="navbar-form navbar-left">
+          <input type="hidden" name="c" value="' . $plugin . '">
+          <input type="hidden" name="a" value="search">
+          <input type="hidden" name="w" value="all">
+        <div class="form-group">
+            <input type="text" name="txt" class="form-control" placeholder="">
+        </div>
+        <button type="submit" class="btn btn-default"><?php _t("Search"); ?></button>
+      </form>
+        
+        
+        
+        
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>' ;
+            break ;
+
+        ## search_advanced.php
+        case "search_advanced.php":
+            $contenido = '
+<?php include view("home", "header"); ?>                
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">        
+         ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "izq"); ?>'
+                    :
+                    '<?php include "izq.php"; ?>'; 
+            $contenido .='
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>
+            <?php _menu_icon("top" , \''.$plugin.'\'); ?>
+            <?php _t("' . ucfirst($plugin) . ' Search advanced"); ?>
+        </h1>
+        
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+       
+        
+            
+ ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "form_search_advanced"); ?>'
+                    :
+                    '<?php include "form_search_advanced.php"; ?>'; 
+            $contenido .='
+                
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">       
+         ';             
+            $contenido .= ($config_destino == "www")?
+                    '<?php include view("' . $plugin . '", "der"); ?>'
+                    :
+                    '<?php include "der.php"; ?>'; 
+            $contenido .='
+    </div>
+</div>
+
+<?php include view("home", "footer"); ?>
+
+' ;
+            break ;
+
+        ## xxxxxxx.php
+        case "xxxxxxxxx.php":
+            $contenido = '' ;
+            break ;
+            
+            
+            
+            
+         ## table_index.php
+        case "table_index.php":
+            $contenido = '
             <table class="table table-striped">
                 <thead>
                     <tr>' . "\n" ;
@@ -1311,127 +1543,10 @@ $pdf->Output();
                     </tr>
                 </tfoot>
             </table>
-
-
-
-
-<?php
-/*        
-        Export:
-        <a href="index.php?c=addresses&a=export_json">JSON</a>
-        <a href="index.php?c=addresses&a=export_pdf">pdf</a>
-*/
-?>
-
-
-    </div>
-</div>
-
-<?php include view("home", "footer"); ?> 
-
 ' ;
-            break ;
-
-        ## izq.php.php
-        case "izq.php":
-            $contenido = '
-<div class="list-group">
-    <a href="#" class="list-group-item active">
-        <i class="fas fa-map-marker"></i>
-            <?php echo _t("' . ucfirst($plugin) . '"); ?>
-    </a>
-    <a href="index.php?c=' . $plugin . '" class="list-group-item"><?php _t("List"); ?></a>
-     <a href="index.php?c=' . $plugin . '&a=add" class="list-group-item"><?php _t("Add"); ?></a> 
-</div>' ;
-            break ;
-
-        ## nav.php
-        case "nav.php":
-            $contenido = '
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-        <a class="navbar-brand" href="#">
-            <?php _t("' . ucfirst($plugin) . '"); ?>
-        </a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        
-        
-        
-      </ul>
-        
-        
-        <form action="index.php" method="get" class="navbar-form navbar-left">
-          <input type="hidden" name="c" value="' . $plugin . '">
-          <input type="hidden" name="a" value="search">
-          <input type="hidden" name="w" value="all">
-        <div class="form-group">
-            <input type="text" name="txt" class="form-control" placeholder="">
-        </div>
-        <button type="submit" class="btn btn-default"><?php _t("Search"); ?></button>
-      </form>
-        
-        
-        
-        
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>' ;
-            break ;
-
-        ## search_advanced.php
-        case "search_advanced.php":
-            $contenido = '
-<?php include view("home", "header"); ?>                
-
-<div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3">        
-        <?php include view("' . $plugin . '", "izq"); ?>
-    </div>
-
-    <div class="col-sm-6 col-md-6 col-lg-6">
-
-        <h1>
-            <i class="fas fa-search"></i>
-            <?php _t("' . ucfirst($plugin) . ' Search advanced"); ?>
-        </h1>
-        
-        <?php
-        if ($_REQUEST) {
-            foreach ($error as $key => $value) {
-                message("info", "$value");
-            }
-        }
-        ?>
-       
-        <?php include view("' . $plugin . '", "form_search_advanced"); ?>
-    </div>
-
-    <div class="col-sm-3 col-md-3 col-lg-3">       
-        <?php //include view("' . $plugin . '", "der"); ?>
-    </div>
-</div>
-
-<?php include view("home", "footer"); ?>
-
-' ;
-            break ;
-
-        ## xxxxxxx.php
-        case "xxxxxxxxx.php":
-            $contenido = '' ;
-            break ;
+            break ;    
+            
+            
 
         default:
             $contenido = "------------" ;
@@ -1451,8 +1566,19 @@ function contenido_functions($plugin) {
 function ' . $plugin . '_field_id($field, $id) {
     global $db;
     $data = null;
-    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE status = 1 AND id= ?");
+    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE id= ?");
     $req->execute(array($id));
+    $data = $req->fetch();
+    //return $data[0];
+    return (isset($data[0]))? $data[0] :  false;
+}
+
+
+function ' . $plugin . '_field_code($field, $code) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE code= ?");
+    $req->execute(array($code));
     $data = $req->fetch();
     //return $data[0];
     return (isset($data[0]))? $data[0] :  false;
@@ -1461,7 +1587,7 @@ function ' . $plugin . '_field_id($field, $id) {
 function ' . $plugin . '_search_by_unique($field, $FieldUnique, $valueUnique) {
     global $db;
     $data = null;
-    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE status = 1 AND  $FieldUnique = ?");
+    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE   $FieldUnique = ?");
     $req->execute(array($valueUnique));
     $data = $req->fetch();
     //return $data[0];
@@ -1474,7 +1600,7 @@ function ' . $plugin . '_list() {
 
     $data = null;
 
-    $req = $db->prepare("SELECT * FROM ' . $plugin . ' WHERE status = 1 ORDER BY id DESC LIMIT $limit  ");
+    $req = $db->prepare("SELECT * FROM ' . $plugin . '  ORDER BY order_by LIMIT $limit  ");
 
     $req->execute(array(
         "limit" => $limit
@@ -1673,7 +1799,13 @@ function crear_plugin($plugin) {
     crear_carpeta("../$config_destino/$plugin/controllers") ;
     crear_carpeta("../$config_destino/$plugin/models") ;
     crear_carpeta("../$config_destino/$plugin/views") ;
-    crear_archivo("../$config_destino/$plugin/functions.php" , contenido_functions($plugin)) ;
+    
+    if($config_destino == "www"){
+        crear_archivo("../$config_destino/$plugin/functions.php" , contenido_functions($plugin)) ;
+    }else{
+        crear_archivo("../$config_destino/$plugin/functions.php" , "<?php") ;
+    }
+    
     crear_archivo("../$config_destino/$plugin/readme.md" , bdd_total_columnas_segun_tabla($plugin)) ;
 
     $archivos = array(
@@ -1695,7 +1827,8 @@ function crear_plugin($plugin) {
         "izq.php" ,
         "nav.php" ,
         "search.php" ,
-        "search_advanced.php" ) ;
+        "search_advanced.php", 
+        "table_index.php") ;
 
     $contenido = "<?php" ;
 
@@ -1703,6 +1836,55 @@ function crear_plugin($plugin) {
         crear_archivo("../$config_destino/$plugin/controllers/$archivo" , contenido_controllers($plugin , $archivo)) ;
         crear_archivo("../$config_destino/$plugin/models/$archivo" , $contenido) ;
         crear_archivo("../$config_destino/$plugin/views/$archivo" , contenido_views($plugin , $archivo)) ;
+    }
+}
+
+
+
+function crear_mvc_esqueleto($plugin) {
+    global $config_destino; 
+    
+    crear_carpeta("../$config_destino/$plugin") ;
+    crear_carpeta("../$config_destino/$plugin/controllers") ;
+    crear_carpeta("../$config_destino/$plugin/models") ;
+    crear_carpeta("../$config_destino/$plugin/views") ;
+    
+    if($config_destino == "www"){
+        crear_archivo("../$config_destino/$plugin/functions.php" , contenido_functions($plugin)) ;
+    }else{
+        crear_archivo("../$config_destino/$plugin/functions.php" , "<?php") ;
+    }
+    
+    crear_archivo("../$config_destino/$plugin/readme.md" , bdd_total_columnas_segun_tabla($plugin)) ;
+
+    $archivos = array(
+        "add.php" ,
+        "addOk.php" ,
+        "delete.php" ,
+        "deleteOk.php" ,
+        "details.php" ,
+        "edit.php" ,
+        "editOk.php" ,
+        "export_json.php" ,
+        "export_pdf.php" ,
+        "form_add.php" ,
+        "form_edit.php" ,
+        "form_details.php" ,
+        "form_delete.php" ,
+        "form_search_advanced.php" ,
+        "index.php" ,
+        "izq.php" ,
+        "nav.php" ,
+        "search.php" ,
+        "search_advanced.php", 
+        "table_index.php") ;
+
+    $contenido = "<?php" ;
+
+    foreach ( $archivos as $archivo ) {
+       // crear_archivo("../$config_destino/$plugin/controllers/$archivo" , contenido_controllers($plugin , $archivo)) ;
+       // crear_archivo("../$config_destino/$plugin/models/$archivo" , $contenido) ;
+       // crear_archivo("../$config_destino/$plugin/views/$archivo" , contenido_views($plugin , $archivo)) ;
     }
 }
 

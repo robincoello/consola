@@ -33,10 +33,15 @@ function campos_crear_campo($tipo, $nombre, $id, $clase ="form-control", $marca_
     $tabla_externa = ( $te['REFERENCED_TABLE_NAME']) ? $te['REFERENCED_TABLE_NAME'] : "";
     $columna_externa = ( $te['REFERENCED_COLUMN_NAME']) ? $te['REFERENCED_COLUMN_NAME'] : "";
 
+    
+    
+    
+    
+    
     switch ($tipo) {
 
         case 'select':
-            $campo = '<select  name="' . $nombre . '" class="' . $clase . '" id="' . $id . '">                                
+            $campo = '<select  name="' . $nombre . '" class="' . $clase . ' selectpicker" id="' . $id . '" data-live-search="true">
                 <?php ' . $tabla_externa . '_select("' . $columna_externa . '","' . $columna_externa . '", array(), array()); ?>                        
                 </select>';
             break;

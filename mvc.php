@@ -56,20 +56,9 @@ if ( $plugin ) {
 ################################################################################
 ################################################################################
 //
-    crear_plugin($plugin) ;
+    crear_mvc_esqueleto($plugin) ;
     echo "###########################################################\n" ;
-//echo "Registro del plugin como controlador en la base de datos\n";
-//echo var_dump(bdd_add_controllers($plugin));
-//echo "###########################################################\n";
-//echo "Agrego los permisos para el root" .  "\n";
-//bdd_add_permissions($plugin, "admin", 1111);
-//echo "Agrego los permisos para admin \n";
-//bdd_add_permissions($plugin, "root", 1111);
-//echo "agrego al menu \n"; 
-//bdd_add_en_menu("top", "config", $plugin, "index.php?c=$plugin", "far fa-folder", "0");
-//echo "Registro en la tabla magia\n"; 
-//magia_registrar_en_tabla($plugin); 
     echo "############################################################\n" ;
-//echo "Registro en Magia";
+
     echo "\n" ;
 }

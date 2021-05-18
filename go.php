@@ -5,11 +5,16 @@ include './campos.php';
 include './v2.php';
 include './bd.php';
 
+$config_destino = "www" ;
 
 ################################################################################
 ################################################################################
 echo "-=- MAGIA PHP -=-" . "\n";
 echo "-- Tablas por crear el plugin\n" . "\n";
+
+echo "$config_destino \n"; 
+
+
 $plugins = array();
 
 $i= 1; 
@@ -17,7 +22,7 @@ foreach (bd_tablas($config_db) as $key => $value) {
     //echo var_dump($value);  
     $ti = "Tables_in_$config_db";
         
-    if( ! file_exists("../www/$value[$ti]")){
+    if( ! file_exists("../$config_destino/$value[$ti]")){
         
         array_push($plugins, $value[$ti]); 
         
