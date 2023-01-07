@@ -1,0 +1,1596 @@
+<?php
+include "config.php"; 
+################################################################################
+################################################################################
+echo "-=- MAGIA PHP -=-" . "\n"; 
+echo "Nombre del plugin?\n"; 
+do {
+$plugin = trim(fgets(STDIN)); // lee una línea de STDIN    
+}
+while ($plugin == "");
+echo "Creation del plugin $plugin \n"; 
+################################################################################
+################################################################################
+
+
+
+
+function bdd_referencias($tabla, $columna){
+   
+    global $db; 
+    $data = null;
+    $req = $db->prepare("            
+             SELECT 
+             REFERENCED_TABLE_NAME, 
+             REFERENCED_COLUMN_NAME 
+             FROM 
+             INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE Table_name = :tabla AND COLUMN_NAME = :columna
+            ");
+    $req->execute(array(
+        "tabla" => $tabla,
+        "columna" => $columna
+            ));   
+    $data = $req->fetch();
+    return $data;
+    
+    
+    
+    
+}
+
+
+function bdd_columnas_segun_tabla($tabla) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("            
+             SHOW COLUMNS FROM $tabla
+            ");
+    $req->execute(array($tabla));   
+    $data = $req->fetchAll();
+    return $data;
+    //return array("id", "contact_id" );
+}
+
+function bdd_total_columnas_segun_tabla($tabla) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("            
+             SELECT * FROM $tabla
+            ");
+    $req->execute();
+    
+    $data = $req->columnCount();
+    
+    return $data;
+}
+
+
+function bdd_add_controllers($plugin) {
+    global $db;
+    
+    $req = $db->prepare("            
+             INSERT INTO `controllers` (`id`, `controller`, `title`, `description`) VALUES (NULL, :plugin, '', '');
+            ");
+    $req->execute(array(
+        "plugin"=>"$plugin"
+    ));
+
+}
+
+function bdd_add_permissions($plugin) {
+    global $db;
+    
+    $req = $db->prepare("            
+             INSERT INTO `permissions` (`id`, `rol`, `controller`, `crud`) VALUES (NULL, 'admin', :plugin, '1111');
+            ");
+    $req->execute(array(
+        "plugin"=>"$plugin"
+    ));
+
+}
+function bdd_add_en_menu($ubicacion, $padre, $label, $url, $icono, $orden) {
+    global $db;
+    
+    $req = $db->prepare("            
+             INSERT INTO `_menus` (`id`, `ubicacion`, `padre`, `label`, `url`, `icono`, `orden`) 
+                            VALUES (:id, :ubicacion, :padre, :label, :url, :icono, :orden);
+            ");
+    $req->execute(array(
+        "id"=>null,
+        "ubicacion"=>$ubicacion,
+        "padre"=>$padre,
+        "label"=>$label,
+        "url"=>$url,
+        "icono"=>$icono,
+        "orden"=>$orden
+        
+    ));
+
+}
+function bdd_add_en_magia($tabla, $campo, $accion, $label, $tipo, $tabla_externa, $columna_externa, $clase, $nombre, $identificador, $marca_agua, $valor, $solo_lectura=null, $obligatorio=null, $seleccionado=null, $desactivado=null, $orden=null, $estatus=null) {
+    global $db;
+    
+    $req = $db->prepare("
+           
+            INSERT INTO `magia` (`id`, `tabla`, `campo`, `accion`, `label`, `tipo`, `tabla_externa`, `columna_externa`, `clase`, `nombre`, `identificador`, `marca_agua`, `valor`, `solo_lectura`, `obligatorio`, `seleccionado`, `desactivado`, `orden`, `estatus`)                         VALUES (:id, :tabla, :campo, :accion, :label, :tipo, :tabla_externa, :columna_externa,  :clase, :nombre, :identificador, :marca_agua, :valor, :solo_lectura, :obligatorio, :seleccionado, :desactivado, :orden, :estatus);
+           
+           ");
+    $req->execute(array(
+        "id"=>null,                        
+        "tabla" => $tabla, 
+        "campo" => $campo, 
+        "accion" => $accion, 
+        "label" => $label, 
+        "tipo" => $tipo, 
+        "tabla_externa" => $tabla_externa, 
+        "columna_externa" => $columna_externa, 
+        "clase" => $clase, 
+        "nombre" => $nombre, 
+        "identificador" => $identificador, 
+        "marca_agua" => $marca_agua, 
+        "valor" => $valor, 
+        "solo_lectura" => $solo_lectura, 
+        "obligatorio" => $obligatorio, 
+        "seleccionado" => $seleccionado, 
+        "desactivado" => $desactivado, 
+        "orden" =>$orden, 
+        "estatus" =>$estatus        
+    ));
+}
+
+
+
+function bdd_tipo_campo($tipo){
+   /*
+    *   global $db;
+    $data = null;
+    $req = $db->prepare("SELECT tipo FROM :tabla WHERE campo=:campo");
+    $req->execute(array(
+        "tabla" => $tabla,
+        "campo" => $campo
+    ));
+    $data = $req->fetch();
+    return $data[0];
+   */ 
+    
+    $t = false;
+    if(strpos($tipo, "int(1)") !== false){
+        $t = "boolean"; 
+    }
+    if(strpos($tipo, "int(11)") !== false){
+        $t = "int"; 
+    }
+
+    if(strpos($tipo, "varchar(") !== false){
+        $t = "text";         
+    }
+    if(strpos($tipo, "date") !== false){
+        $t = "date";         
+    }
+    if(strpos($tipo, "timestamp") !== false){
+        $t = "timestamp";         
+    }
+    
+    return $t;
+      
+     
+}
+
+function bdd_campo($tipo, $name) {        
+    global $plugin;
+    
+    
+    $te = bdd_referencias($plugin, $name);
+  
+    //echo var_dump($tabla_externa);
+    $tabla_externa = ( $te['REFERENCED_TABLE_NAME'])? $te['REFERENCED_TABLE_NAME'] : "";
+    $columna_externa = ( $te['REFERENCED_COLUMN_NAME'])? $te['REFERENCED_COLUMN_NAME'] : "";
+            
+    switch ($tipo) {
+        
+        case 's':
+            $campo = '<select  name="'.$name.'" class="form-control" id="'. $tabla_externa.'">                                
+                <?php '.$tabla_externa.'_select("'.$columna_externa.'","'.$columna_externa.'", array(), array()); ?>                        
+                </select>';
+            break;       
+        
+        case 'boolean':
+            $campo = '<select type="date"  name="'.$name.'" class="form-control" id="'.$name.'">                
+                <option value="0">0</option>
+                <option value="1">1</option>                
+                </select>';
+            break;       
+        
+        case 'int':
+            $campo = '<input type="number"  name="'.$name.'" class="form-control" id="'.$name.'" placeholder="int">';
+            break;
+        
+        case 'text':
+            $campo = '<textarea type="number"  name="'.$name.'" class="form-control" id="'.$name.'" placeholder="text"></textarea>';
+            break;
+        
+        case 'date':
+            $campo = '<input type="date"  name="'.$name.'" class="form-control" id="'.$name.'" placeholder="date">';
+            break;        
+        
+        case 'timestamp':
+            $campo = '<input type="date"  name="'.$name.'" class="form-control" id="'.$name.'" placeholder="timestamp">';
+            break;
+        
+        
+
+        default:
+            $campo = '<input type="text"  name="'.$name.'" class="form-control" id="'.$name.'" placeholder="'.$tipo.' defecto">';
+            break;
+    }
+
+    return $campo;
+}
+
+function contenido_controllers($plugin, $archivo) {
+
+    switch ($archivo) {
+        ## add.php
+        case "add.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "create")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+include "www/' . $plugin . '/views/add.php";';
+            break;
+        
+        
+        ## addOk.php
+        case "addOk.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "create")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+';
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                if( $columna['Field'] != 'id'){                    
+                    $contenido .= '$'.$columna['Field'].' = (isset($_POST["'.$columna['Field'].'"])) ? clean($_POST["'.$columna['Field'].'"]) : false;' . "\n"; 
+                }
+            }
+            $contenido .= '  
+
+
+
+$error = array();
+
+
+
+
+';
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                if( $columna['Field'] != 'id'){                    
+                    //$contenido .= '$text = (isset($_POST["'.$columna['Field'].'"])) ? clean($_POST["'.$columna['Field'].'"]) : false;';                                                                         
+                    $contenido .= 'if (!$'.$columna['Field'].') {
+    array_push($error, \'$'.$columna['Field'].' not send\');
+}';                                                                         
+                }
+            }
+            $contenido .= '  
+                
+
+
+#************************************************************************
+// Busca si uya existe el texto en la BD
+
+if( ' . $plugin . '_search($'.$columna['Field'].')){
+    //array_push($error, "That text with that context the database already exists");
+}
+
+
+if (!$error) {
+    '.$plugin.'_add(
+            
+            
+';
+           $i=0;
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";                  
+                
+                if( $columna['Field'] != 'id'){                        
+                    $contenido .= '$'.$columna['Field'].' '.$coma.'  ';                                                                         
+                }
+                $i++;
+            }
+            $contenido .= ' 
+
+
+    );
+              
+    header("Location: index.php?c=' . $plugin . '");
+
+    
+} else {
+
+    array_push($error, "Check your form");
+}
+
+include "www/' . $plugin . '/views/index.php";';
+            break;
+
+
+
+        ## delete.php
+        case "delete.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "delete")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+$id    = (isset($_POST["id"]))         ? clean($_POST["id"]) : false;
+
+
+$error = array();
+################################################################################
+if (! $c) {
+    array_push($error, "Controller don\'t send");
+}
+if (! $a) {
+    array_push($error, "Action don\'t send");
+}
+if (! $id) {
+    array_push($error, "ID Don\'t send");
+}
+################################################################################
+
+if ($a !="delete") {
+    array_push($error, "Action error");
+}
+
+if (! is_id($id)) {
+    array_push($error, "Id Error");
+}
+################################################################################
+
+if ( !$error && $a == "delete") {
+    
+        ' . $plugin . '_delete(
+                $id
+        );
+
+        header("Location: index.php?c=' . $plugin . '");
+         
+}
+include "www/' . $plugin . '/views/add.php";';
+            break;
+
+
+
+        ## details.php
+        case "details.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+$id    = (isset($_REQUEST["id"]))      ? clean($_REQUEST["id"]) : false;
+
+$error = array();
+
+################################################################################
+if (! $c) {
+    array_push($error, "Controller Don\'t send");
+}
+
+if (! $a) {
+    array_push($error, "Action Don\'t send");
+}
+if (! $id) {
+    array_push($error, "ID Don\'t send");
+}
+
+
+################################################################################
+
+if (! is_id($id)) {
+    array_push($error, "ID format error");
+}
+################################################################################
+if (!$error) {
+    $'.$plugin.' = '.$plugin.'_details($id);
+    include "www/'.$plugin.'/views/details.php";
+} else {
+    array_push($error, "Check your form");
+     include "www/'.$plugin.'/views/index.php";
+}
+
+';
+            break;
+
+
+        ## edit.php
+        case "edit.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "update")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+$id = (isset($_REQUEST["id"])) ? clean($_REQUEST["id"]) : false;
+
+$error = array();
+
+################################################################################
+if (!$c) {
+    array_push($error, "Controller Don\'t send");
+}
+if (!$a) {
+    array_push($error, "Action Don\'t send");
+}
+if (!$id) {
+    array_push($error, "ID Don\'t send");
+}
+################################################################################
+################################################################################
+################################################################################
+
+if ($a != "edit") {
+    array_push($error, "Action format error");
+}
+if (!is_id($id)) {
+    array_push($error, "ID format error");
+}
+   
+################################################################################
+if (!$error) {
+    $'.$plugin.' = '.$plugin.'_details($id);
+    include "www/'.$plugin.'/views/edit.php";
+} else {
+    array_push($error, "Check your form");
+     include "www/'.$plugin.'/views/index.php";
+}
+
+';
+            break;
+        
+        
+        
+        ## editOk.php
+        ## editOk.php
+        ## editOk.php
+        ## editOk.php
+        ## editOk.php
+        ## editOk.php
+        case "editOk.php":
+            $contenido = '<?php
+if (!permissions_has_permission($u_rol, $c, "update")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+// Recolection vars
+
+
+';
+           $i=0;
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin) )?",":"";  
+                                                     
+                    //$contenido .= '$'.$columna['Field'].' '.$coma.'  ';                                                                         
+                    $contenido .= '$'.$columna['Field'].' = (isset($_POST["'.$columna['Field'].'"])) ? clean($_POST["'.$columna['Field'].'"]) : false;' . "\n";                                                                         
+                
+                $i++;
+            }
+            $contenido .= ' 
+
+
+
+$error = array();
+//
+################################################################################
+if (! $c) {
+    array_push($error, "Controller Don\'t send");
+}
+//
+if (! $a) {
+    array_push($error, "Action Don\'t send");
+}
+//
+if (! $id) {
+    array_push($error, "ID Don\'t send");
+}
+//
+if (! $text) {
+   // array_push($error, "Text Don\'t send");
+}
+//
+################################################################################
+
+if (! is_id($id)) {
+    array_push($error, "ID format error");
+}
+//
+################################################################################
+if (! $error ) {
+    
+    ' . $plugin . '_edit(
+        
+
+
+';
+           $i=1;
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin) )?",":"";  
+                
+                                                     
+                    $contenido .= '$'.$columna['Field'].' '. $coma.'  ';                                                                         
+                
+                $i++;
+            }
+            $contenido .= ' 
+
+
+
+                
+        );
+        header("Location: index.php?c=' . $plugin . '&a=details&id=$id");
+          
+}
+
+$' . $plugin . ' = ' . $plugin . '_details($id);
+    
+include "www/' . $plugin . '/views/index.php";
+
+';
+            break;
+
+        
+        ## export_json.php
+        case "export_json.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+
+$error = array();
+
+$' . $plugin . ' = null;
+
+$' . $plugin . ' = ' . $plugin . '_list();
+
+include "www/' . $plugin . '/views/export_json.php";
+
+if ($debug) {
+    include "www/' . $plugin . '/views/debug.php";
+}';
+            break;
+        
+        ## export_pdf.php
+        case "export_pdf.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+$error = array();
+$' . $plugin . ' = null;
+$' . $plugin . ' = '.$plugin.'_list();
+include "www/' . $plugin . '/views/export_pdf.php";
+if ($debug) {
+    include "www/' . $plugin . '/views/debug.php";
+}';
+            break;
+
+
+
+        
+        
+        
+
+        ## index.php.php
+        case "index.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+
+
+$error = array();
+$' . $plugin . ' = null;
+$' . $plugin . ' = ' . $plugin . '_list(10, 5);
+include "www/' . $plugin . '/views/index.php";
+//include "./www/home/views/index.php";
+if ($debug) {
+    include "www/' . $plugin . '/views/debug.php";
+}';
+            break;
+
+
+        ## search.php
+        case "search.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+$' . $plugin . ' = null;
+$w = (isset($_GET["w"])) ? clean($_GET["w"]) : false;
+$error = array();
+
+################################################################################
+################################################################################
+switch ($w) {
+    case "id":
+        $txt = (isset($_GET["txt"])) ? clean($_GET["txt"]) : false;        
+        $' . $plugin . ' = ' . $plugin . '_search_by_id($txt);
+        break;
+
+    default:
+        $txt = (isset($_GET["txt"])) ? clean($_GET["txt"]) : false;
+        $' . $plugin . ' = ' . $plugin . '_search($txt);
+        break;
+}
+
+include "www/' . $plugin . '/views/index.php";
+';
+            break;
+
+
+
+        ## search_advanced.php
+        case "search_advanced.php":
+            $contenido = '<?php
+
+if (!permissions_has_permission($u_rol, $c, "read")) {
+    header("Location: index.php?c=home&a=no_access");
+    die("Error has permission ");
+}
+
+
+include "www/' . $plugin . '/views/search_advanced.php";
+';
+            break;
+
+
+
+
+        default:
+            $contenido = "------------";
+            break;
+    }
+
+
+    return "$contenido";
+}
+
+function contenido_views($plugin, $archivo) {
+
+    switch ($archivo) {
+        ## add.php
+        case "add.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+        <?php //include "izq.php"; ?>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>
+            <i class="fas fa-map-marker"></i>
+            <?php _t("Add ' . $plugin . '"); ?>
+        </h1>
+
+
+        <?php include "form_add.php"; ?>
+
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <?php // include "der.php"; ?>
+    </div>
+</div>
+
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;
+
+        ## delete.php
+        case "delete.php":
+            $contenido = 'delete';
+            break;
+
+        ## details.php
+        case "details.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+        <?php // include "izq.php"; ?>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>
+            <i class="fas fa-language"></i>
+           <?php _t("' . $plugin . ' details"); ?>
+        </h1>
+        <hr>
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+
+        <?php include "form_details.php"; ?>
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <?php // include "der.php";  ?>
+    </div>
+</div>
+
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;
+
+        ## edit.php
+        case "edit.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+        <?php // include "izq.php"; ?>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>
+            <i class="fas fa-map-marker"></i>
+            <?php _t("' . ucfirst($plugin) . ' edit"); ?>
+        </h1>
+        <hr>
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+
+        <?php include "form_edit.php"; ?>
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <?php // include "der.php";  ?>
+    </div>
+</div>
+
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;                        
+        
+        ## export_json.php
+        case "export_json.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-lg-0">
+        <?php //include "www/addresses/views/izq.php"; ?>
+    </div>
+
+    <div class="col-lg-12">
+
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+        <pre>
+            <?php
+            echo json_encode($' . $plugin . ');
+            ?>
+        </pre>
+
+    </div>
+</div>
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;
+                
+        ## export_pdf.php
+        case "export_pdf.php":
+            $contenido = '<?php
+require("fpdf/fpdf.php");
+
+$pdf = new FPDF();
+$pdf->AddPage("L");
+$pdf->SetFont("Arial","B",16);
+$pdf->Cell(40,10,"Hello World !");
+$pdf->Output();
+';
+            break;                       
+
+
+        ## form_add.php
+        case "form_add.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+    <input type="hidden" name="c" value="' . $plugin . '">
+    <input type="hidden" name="a" value="addOk">
+
+';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {  
+                
+                if( $columna['Field'] != 'id'){
+                    $contenido .= '<div class="form-group">
+                <label class="control-label col-sm-2" for="contact_id"><?php _t("'.ucfirst($columna['Field']).'"); ?></label>
+                <div class="col-sm-8">';
+                    
+                    $contenido .= (bdd_referencias($plugin, $columna['Field']))?
+                            bdd_campo("select", $columna['Field'])
+                            :
+                            bdd_campo($columna['Type'], $columna['Field'])
+                            ;
+                    
+                    
+                    
+                    
+                    
+                
+                
+                $contenido .= '</div>	
+                            </div>' . "\n\n"; 
+                }
+            }
+
+
+
+
+            $contenido .= '  
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Save"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+';
+            break;
+
+        ## form_add.php
+        case "form_details.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+    <input type="hidden" name="c" value="'.$plugin.'">
+    <input type="hidden" name="a" value="edit">
+    <input type="hidden" name="id" value="<?php echo "$id"; ?>">
+    
+
+
+    ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+               // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= '<div class="form-group">
+        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">                    
+            <input type="' . $columna['Field'] . '" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo "$'.$plugin.'[' . $columna['Field'] . ']"; ?>" disabled="" >
+        </div>	
+    </div>' . "\n";
+                
+                
+                
+            }
+
+    $contenido .='
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Edit"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+
+';
+            break;
+
+        ## form_edit.php
+        case "form_edit.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="post" >
+    <input type="hidden" name="c" value="'.$plugin.'">
+    <input type="hidden" name="a" value="editOk">
+    <input type="hidden" name="id" value="<?php echo "$id"; ?>">
+    
+   
+
+    ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+               // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                
+                
+                if( $columna['Field'] != 'id'){
+                   $contenido .= '<div class="form-group">
+        <label class="control-label col-sm-2" for="contact_id"><?php _t("' . ucfirst($columna['Field']) . '"); ?></label>
+        <div class="col-sm-8">                    
+            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="<?php echo $'.$plugin.'[\'' . $columna['Field'] . '\']?>">
+        </div>	
+    </div>' . "\n";
+                
+ 
+                }                
+                
+                
+                
+            }
+
+    $contenido .='
+
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Save"); ?>">
+        </div>      							
+    </div>      							
+
+</form>
+';
+            break;
+        
+        ## search.php
+        case "search.php":
+            $contenido = '<?php include("header.php"); ?>  
+
+<div class="row">
+    <div class="col-lg-3">
+        <?php include "izq.php"; ?>
+    </div>
+
+
+    <div class="col-lg-9">
+        <h1><?php _t("' . $plugin . '"); ?></h1>
+        
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+
+        <form class="form-inline" action="index.php" method="get">
+            <input type="hidden" name="c" value="' . $plugin . '"> 
+            <input type="hidden" name="a" value="search"> 
+
+            <div class="form-group">
+                <label class="sr-only" for="txt">Client</label>
+                <input class="form-control" type="text" name="txt" id="txt" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default"><?php _t("Search"); ?></button>
+        </form>
+
+
+        
+    </div>
+</div>
+
+<?php include "footer.php"; ?>';
+            break;
+        
+        ## form_edit.php
+        case "form_search_advanced.php":
+            $contenido = '<form class="form-horizontal" action="index.php" method="get" >
+    <input type="hidden" name="c" value="'.$plugin.'">
+    <input type="hidden" name="a" value="search">
+    <input type="hidden" name="w" value="s_a">
+
+
+
+    ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+               // $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+                $contenido .= 'echo "<div class="form-group">
+        <label class="control-label col-sm-2" for="contact_id"><?php _t("Text"); ?></label>
+        <div class="col-sm-8">                    
+            <input type="text" name="' . $columna['Field'] . '" class="form-control"  id="' . $columna['Field'] . '" placeholder="' . $columna['Field'] . '" value="" >
+        </div>	
+    </div>";' . "\n";
+                
+                
+                
+            }
+
+    $contenido .='
+
+
+
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for=""></label>
+        <div class="col-sm-8">    
+            <input class="btn btn-primary active" type ="submit" value ="<?php _t("Search"); ?>">
+        </div>      							
+    </div>      							
+
+</form>';
+            break;
+        
+        ## index.php
+        case "index.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-lg-3">
+        <?php  include "izq.php"; ?>
+    </div>
+
+    <div class="col-lg-9">
+
+
+
+        <?php
+        include "nav.php";
+        ?>
+
+
+
+
+
+        <?php
+        if ($_REQUEST) {
+            foreach ($error as $key => $value) {
+                message("info", "$value");
+            }
+        }
+        ?>
+
+
+
+<?php 
+// https://api.jquery.com/prop/
+?>
+
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                $contenido .= '<th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+            }
+
+
+            $contenido .= '                                                                       
+                        <th><?php _t("Action"); ?></th>                                                                      
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <?php
+                        
+                        
+                        if( ! $' . $plugin . ' ){
+                            message("info", "No items"); 
+                        }
+                        
+                        
+                        //foreach ($liste_info as $address) {
+                        foreach ($' . $plugin . ' as $' . $plugin . ') {
+
+                            
+                            $menu=\'<div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                              Actions
+                              <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                              <li><a href="index.php?c=' . $plugin . '&a=details&id=\'.$' . $plugin . '["id"].\'">\'._tr("Details").\'</a></li>
+                              <li><a href="index.php?c=' . $plugin . '&a=edit&id=\'.$' . $plugin . '["id"].\'">\'._tr("Edit").\'</a></li>
+                            </ul>
+                          </div>\'; 
+                         //   $photo = addresses_photos_principal($address["id"]);
+                         //   $contact_name = contacts_field_id("name", $' . $plugin . '["contact_id"]);
+                         //   $contact_lastname = contacts_field_id("lastname", $' . $plugin . '["contact_id"]);
+                            
+                            echo "<tr>";                            
+                            
+                            
+                            
+            ';
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                $contenido .= 'echo "<td>$' . $plugin . '[' . $columna['Field'] . ']</td>";' . "\n";
+            }
+
+
+            $contenido .= '                              
+                            echo "<td>$menu</td>";
+                          
+                            echo "</tr>";
+                        }
+                        ?>	
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {
+                $contenido .= '<th><?php _t("' . ucfirst($columna['Field']) . '"); ?></th>' . "\n";
+            }
+
+
+            $contenido .= '                                                                     
+                        <th><?php _t("Action"); ?></th>                                                                      
+                    </tr>
+                </tfoot>
+            </table>
+
+
+
+
+<?php
+/*        
+        Export:
+        <a href="index.php?c=addresses&a=export_json">JSON</a>
+        <a href="index.php?c=addresses&a=export_pdf">pdf</a>
+*/
+?>
+
+
+    </div>
+</div>
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;
+            
+
+
+        ## izq.php.php
+        case "izq.php":
+            $contenido = '
+<div class="list-group">
+    <a href="#" class="list-group-item active">
+        <i class="fas fa-map-marker"></i>
+            <?php echo _t("' . ucfirst($plugin) . '"); ?>
+    </a>
+    <a href="index.php?c=' . $plugin . '" class="list-group-item"><?php _t("List"); ?></a>
+     <a href="index.php?c=' . $plugin . '&a=add" class="list-group-item"><?php _t("Add"); ?></a> 
+</div>';
+            break;
+        
+        
+        ## nav.php
+        case "nav.php":
+            $contenido = '
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <a class="navbar-brand" href="#">
+            <?php _t("' . ucfirst($plugin) . '"); ?>
+        </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        
+      </ul>
+        
+        
+        <form action="index.php" method="get" class="navbar-form navbar-left">
+          <input type="hidden" name="c" value="' . $plugin . '">
+          <input type="hidden" name="a" value="search">
+          <input type="hidden" name="w" value="all">
+        <div class="form-group">
+            <input type="text" name="txt" class="form-control" placeholder="">
+        </div>
+        <button type="submit" class="btn btn-default"><?php _t("Search"); ?></button>
+      </form>
+        
+        
+        
+        
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>';
+            break;
+
+        
+        ## search_advanced.php
+        case "search_advanced.php":
+            $contenido = '<?php include("www/home/views/header.php"); ?>  
+
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+        <?php //include "izq.php"; ?>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6">
+
+        <h1>    
+            <i class="fas fa-language"></i>
+            <?php _t("Search advanced"); ?>
+        </h1>
+
+
+        <?php include "form_search_advanced.php"; ?>
+
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+        <?php // include "der.php"; ?>
+    </div>
+</div>
+
+
+<?php include("www/home/views/footer.php"); ?>  
+
+';
+            break;
+        
+        ## xxxxxxx.php
+        case "xxxxxxxxx.php":
+            $contenido = '';
+            break;
+
+
+
+
+        default:
+            $contenido = "------------";
+            break;
+    }
+
+
+    return "$contenido";
+}
+
+function contenido_functions($plugin) {
+    $contenido = '<?php
+// plugin = '.$plugin.'
+// creation date : 
+// 
+// 
+function ' . $plugin . '_field_id($field, $id) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("SELECT $field FROM ' . $plugin . ' WHERE id= ?");
+    $req->execute(array($id));
+    $data = $req->fetch();
+    //return $data[0];
+    return (isset($data[0]))??false;
+}
+
+function ' . $plugin . '_list() {
+    global $db;
+    $limit = 999;
+
+    $data = null;
+
+    $req = $db->prepare("SELECT * FROM ' . $plugin . ' ORDER BY id DESC LIMIT $limit ");
+
+    $req->execute(array(
+        "limit" => $limit
+    ));
+    $data = $req->fetchall();
+    //return $data;
+    return (isset($data[0]))??false;
+}
+
+function ' . $plugin . '_details($id) {
+    global $db;
+    $req = $db->prepare("SELECT * FROM ' . $plugin . ' WHERE id= ? ");
+    $req->execute(array($id));
+    $data = $req->fetch();
+    return $data;
+}
+
+function ' . $plugin . '_delete($id) {
+    global $db;
+    $req = $db->prepare("DELETE FROM ' . $plugin . ' WHERE id=? ");
+    $req->execute(array($id));
+}
+
+function ' . $plugin . '_edit(';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";  
+                
+                    $contenido .= '$'.$columna['Field'].' '.$coma.'  ';
+                
+                $i++; 
+            }
+
+
+            $contenido .= ') {
+
+    global $db;
+    $req = $db->prepare(" UPDATE ' . $plugin . ' SET "
+            
+            ';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";  
+                if($columna['Field'] !="id"){
+                    $contenido .= '."'.$columna['Field'].'=:'.$columna['Field'].' '.$coma.' "   ' . "\n";
+                }    
+                
+                $i++; 
+            }
+            $contenido .= '
+            
+                    
+            
+                    
+            . " WHERE id=:id ");
+    $req->execute(array(
+';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin) )?",":"";                                      
+                    $contenido .= ' "'.$columna['Field'].'" =>$'.$columna['Field'].' '.$coma.'  ';                
+                $i++; 
+            }
+
+            $contenido .= '
+                
+
+));
+}
+
+function ' . $plugin . '_add(';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";  
+                if( $columna['Field'] != 'id'){
+                    $contenido .= '$'.$columna['Field'].' '.$coma.'  ';
+                }
+                $i++; 
+            }
+
+
+            $contenido .= ') {
+    global $db;
+    $req = $db->prepare(" INSERT INTO ' . $plugin . ' (';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";                                             
+                $contenido .= ' '.$columna['Field'].' '.$coma.'  ';
+               
+                $i++; 
+            }
+
+
+            $contenido .= ')
+                                       VALUES  (';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";                                           
+                $contenido .= ':'.$columna['Field'].' '.$coma.'  ';
+               
+                $i++; 
+            }
+
+            $contenido .= ') ");
+
+    $req->execute(array(
+
+';
+            $i = 0; 
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                                                      
+                $coma = ($i <  bdd_total_columnas_segun_tabla($plugin)-1 )?",":"";   
+                
+                if( $columna['Field'] == "id" ){
+                   $contenido .= ' "'.$columna['Field'].'" => null '.$coma.'  ' . "\n"; 
+                }else{
+                    $contenido .= ' "'.$columna['Field'].'" => $'.$columna['Field'].' '.$coma.'  ' . "\n";
+                }
+               
+                $i++; 
+            }
+
+            $contenido .= '                        
+            )
+    );
+}
+
+
+
+function ' . $plugin . '_search($txt) {
+    global $db;
+    $data = null;
+    $req = $db->prepare("SELECT * FROM ' . $plugin . ' 
+    
+            WHERE id like :txt ';
+
+            foreach (bdd_columnas_segun_tabla($plugin) as $columna) {                
+                $contenido .= 'OR ' . $columna['Field'] . ' like :txt' . "\n";
+            }
+
+
+            $contenido .= '                           
+");
+    $req->execute(array(
+        "txt" => "%$txt%"
+    ));
+    $data = $req->fetchall();
+    return $data;
+}
+
+
+
+function ' . $plugin . '_select($k, $v, $selected="", $disabled=array()) {    
+    $c = "";    
+    foreach (' . $plugin . '_list() as $key => $value) {        
+        $s = ($selected == $value[$k])?" selected  ":"";       
+        $d = ( in_array($value[$k], $disabled )) ? " disabled ":"";                        
+        $c .= "<option value=\"$value[$k]\" $s $d >$value[$k] - $value[$v]</option>" ;
+    }    
+    echo  $c;     
+}
+
+';
+
+    return $contenido;
+}
+
+################################################################################
+################################################################################
+################################################################################
+
+function crear_carpeta($carpeta) {
+    $cmd = "mkdir -p $carpeta";
+    shell_exec($cmd);
+}
+
+function crear_archivo($archivo, $contenido) {
+    $fh = fopen($archivo, 'w') or die("Se produjo un error al crear el archivo");
+    fwrite($fh, $contenido) or die("No se pudo escribir en el archivo $archivo \n");
+    fclose($fh);
+    echo "El archivo '$archivo' Se ha escrito sin problemas  \n";
+}
+
+function crear_plugin($plugin) {
+    crear_carpeta("../www/$plugin");
+    crear_carpeta("../www/$plugin/controllers");
+    crear_carpeta("../www/$plugin/models");
+    crear_carpeta("../www/$plugin/views");
+    crear_archivo("../www/$plugin/functions.php", contenido_functions($plugin));
+    crear_archivo("../www/$plugin/readme.md", bdd_total_columnas_segun_tabla($plugin));
+
+    $archivos = array(        
+        "add.php",
+        "addOk.php",
+        "delete.php",
+        "details.php",
+        "edit.php",
+        "editOk.php",
+        "export_json.php",
+        "export_pdf.php",
+        "form_add.php",
+        "form_edit.php",
+        "form_details.php",
+        "index.php",
+        "izq.php",
+        "nav.php",
+        "search.php",
+        "search_advanced.php",
+        "delete.php");
+
+    $contenido = "<?php";
+
+
+    foreach ($archivos as $archivo) {
+        crear_archivo("../www/$plugin/controllers/$archivo", contenido_controllers($plugin, $archivo));
+        crear_archivo("../www/$plugin/models/$archivo", $contenido);
+        crear_archivo("../www/$plugin/views/$archivo", contenido_views($plugin, $archivo));
+    }
+}
+
+
+
+
+
+
+foreach (bdd_columnas_segun_tabla($plugin) as $campo) {
+    
+    //echo $campo['Field'] . " \n" ; 
+    $tipo = bdd_tipo_campo($campo['Type']);
+    
+    $te = bdd_referencias($plugin, $campo['Field']);
+  
+    //echo var_dump($tabla_externa);
+    $tabla_externa = ($te['REFERENCED_TABLE_NAME'])? $te['REFERENCED_TABLE_NAME'] : "";
+    $columna_externa = ($te['REFERENCED_COLUMN_NAME'])? $te['REFERENCED_COLUMN_NAME'] : "";
+    
+    
+    echo "la tabla externa es: $tabla_externa \n";
+    echo "la columlna externa es: $columna_externa \n";
+    
+    
+    foreach (array("ver","crear","editar","borrar") as $crud) {        
+           bdd_add_en_magia($plugin, $campo['Field'], $crud, $campo['Field'], $tipo, $tabla_externa, $columna_externa, "form-control", $campo['Field'], $campo['Field'], $campo['Field'], "valor"); 
+        
+        
+    }
+    
+}
+
+
+crear_plugin($plugin);
+echo "###########################################################\n"; 
+echo "Registro del plugin como controlador en la base de datos\n"; 
+bdd_add_controllers($plugin);
+echo "###########################################################\n";
+echo "Agrego los permisos para el root"; 
+bdd_add_permissions($plugin); 
+
+bdd_add_en_menu("top", "config", $plugin, "?c=$plugin", "far fa-folder", "0"); 
+
+echo "############################################################\n";
+echo "Registro en Magia"; 
+
+
+
+?>
+
+
