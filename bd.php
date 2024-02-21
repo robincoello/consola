@@ -1,16 +1,15 @@
 <?php
 
-function bd_tablas($bd) {
+function bd_tablas($base_datos) {
 
     global $db;
-    $limit = 10;
 
     $data = null;
-
     
-    $req = $db->prepare("     SHOW FULL TABLES FROM $bd   ");
+    $req = $db->prepare("SHOW FULL TABLES FROM $base_datos   ");
 
-    $req->execute(array($bd
+    $req->execute(array(
+       // "base_datos" => $base_datos
     ));
 
     $data = $req->fetchall();

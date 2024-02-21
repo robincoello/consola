@@ -11,9 +11,3 @@ git pull git@bitbucket.org:robincoello/consola.git
 Aca se pone los datos de coneccion a la base de datos 
 
 
-## uso
-php go.php
-
-## youtube
-
-https://youtu.be/UixTn2vkdxE
