@@ -16,7 +16,5 @@ php go.php
 ## youtube 
 https://youtu.be/UixTn2vkdxE
 
-[![](https://markdown-videos-api.jorgenkh.no/youtube/UixTn2vkdxE)](https://youtu.be/UixTn2vkdxE)
-
 
 
